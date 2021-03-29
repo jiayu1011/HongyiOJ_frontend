@@ -34,13 +34,14 @@ function Index2(props){
     const chineseMenuArr = [
         '首页', '题库', '比赛', '讨论'
     ]
+    const defaultSelectedKeys = ['home'];
 
 
 
 
     const [logged, setLogged] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
-    const [selectedKeys, setSelectedKeys] = useState(['home']);
+    const [selectedKeys, setSelectedKeys] = useState(['']);
     const [userInfo, setUserInfo] = useState({
         avatarUrl: 'https://sf1-ttcdn-tos.pstatp.com/img/user-avatar/f4998fe95ef30363f12a04f670579825~300x300.image',
         username: '未登录',
@@ -72,13 +73,14 @@ function Index2(props){
     }
 
     function handleRouter(item){
-        history.push(item.key);
+        // console.log(item);
+        history.push('/' + item.key);
     }
 
 
     //初始化信息
     useEffect(() => {
-        console.log(props);
+        // console.log(props);
         // console.log(history);
         // console.log(sessionStorage);
 
@@ -88,13 +90,22 @@ function Index2(props){
 
         }
 
+        let path = props.location.pathname;
+        if(path==='/'){
+            history.push('/home');
+        }
+
+
 
     }, [])
 
-    //切换专栏时调整面包屑
+    //切换专栏时调整breadcrumb
     useEffect(() => {
         let pathArr = props.location.pathname.split('/');
         setBreadcrumb(pathArr.map((item) => chineseMenuArr[englishMenuArr.indexOf(item)]));
+        // console.log([pathArr[1]]);
+        setSelectedKeys([pathArr[1]]);
+
     }, [props.location.pathname]);
 
 
@@ -124,7 +135,7 @@ function Index2(props){
                 <div className="logo" onClick={() => history.push('/home')}>Hongyi OJ</div>
                 <Menu
                     theme="dark"
-                    defaultSelectedKeys={selectedKeys}
+                    selectedKeys={selectedKeys}
                     onClick={handleRouter}
                     mode="inline">
                     <Menu.Item key="home" icon={<PieChartOutlined />}>
