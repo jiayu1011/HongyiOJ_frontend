@@ -1,18 +1,27 @@
 import React, {useState, useEffect} from "react";
-import {useHistory} from 'react-router-dom'
 
 function NotFound (props){
 
-    // const route = props.route;
-    // const history = useHistory();
-    //
-    // useEffect(() => {
-    //     history.push('/home');
-    //
-    // })
+    const history = props.history;
+
+    const [count, setCount] = useState(3);
+
+    useEffect(() => {
+        setTimeout(() => {
+            if(count===1){
+                history.push('/home');
+            } else{
+                setCount(count-1);
+            }
+        }, 1000)
+
+    })
 
     return(
-        <div>404 Not Found</div>
+        <div>
+            <div>404 Not Found</div>
+            <div>{count}秒后会返回首页</div>
+        </div>
     )
 }
 

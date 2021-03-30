@@ -2,7 +2,7 @@ import React from "react";
 
 function Contests(){
     return (
-        <div>比赛功能尚未开放哦~</div>
+        <div>期待比赛吗~</div>
     )
 }
 

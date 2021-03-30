@@ -64,6 +64,11 @@ const routes = [
                 path: '/discussions',
                 component: Discussions,
             },
+            //若并没有匹配到上述所有路径则404
+            {
+                path: '*',
+                component: NotFound
+            }
 
 
 

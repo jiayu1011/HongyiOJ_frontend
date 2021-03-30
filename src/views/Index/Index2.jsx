@@ -13,7 +13,6 @@ import {renderRoutes} from "react-router-config";
 
 import Avatar from "antd/es/avatar/avatar";
 import http from "../../utils/http";
-import {useHistory} from "react-router-dom";
 import utils from "../../utils/utils";
 import moment from 'moment';
 
@@ -24,7 +23,7 @@ const { SubMenu } = Menu;
 
 function Index2(props){
 
-    const history = useHistory();
+    const history = props.history;
     const route = props.route;
 
     //中英文菜单专栏数组
@@ -34,9 +33,6 @@ function Index2(props){
     const chineseMenuArr = [
         '首页', '题库', '比赛', '讨论'
     ]
-    const defaultSelectedKeys = ['home'];
-
-
 
 
     const [logged, setLogged] = useState(false);
