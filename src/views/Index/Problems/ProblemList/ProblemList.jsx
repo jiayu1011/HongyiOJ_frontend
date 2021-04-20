@@ -27,7 +27,7 @@ export default function ProblemList(props){
     const [currentPage, setCurrentPage] = useState(1);
 
     function getProblemList(){
-        http.get('/problemList', {
+        http.get('/problem/list', {
                 params: {
                     currentPage: currentPage,
                 }
@@ -51,7 +51,7 @@ export default function ProblemList(props){
         } else {
             params.problemName = searchInput;
         }
-        http.get('/problemList',{
+        http.get('/problem/list',{
             params: params,
         }).then(res => {
             console.log('problemList:', res);

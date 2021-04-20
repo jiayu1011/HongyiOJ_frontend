@@ -103,8 +103,7 @@ function Index2(props){
 
     //用户下拉选项单
     const userDropdownMenu = logged? (
-        userInfo.identity==='admin'?
-        (
+        userInfo.identity==='admin'? (
             <Menu onClick={handleMenuClick}>
                 <Menu.Item key="basicInfo">基本资料</Menu.Item>
                 <Menu.Item key="modifyPassword">修改密码</Menu.Item>
@@ -114,40 +113,55 @@ function Index2(props){
                 <Menu.Item key="logout">退出</Menu.Item>
             </Menu>
         ): (
-                <Menu onClick={handleMenuClick}>
-                    <Menu.Item key="basicInfo">基本资料</Menu.Item>
-                    <Menu.Item key="modifyPassword">修改密码</Menu.Item>
-                    <Menu.Item key="uploadProblem">上传题目</Menu.Item>
-                    <Menu.Divider />
-                    <Menu.Item key="logout">退出</Menu.Item>
-                </Menu>
-            )
+            <Menu onClick={handleMenuClick}>
+                <Menu.Item key="basicInfo">基本资料</Menu.Item>
+                <Menu.Item key="modifyPassword">修改密码</Menu.Item>
+                <Menu.Item key="uploadProblem">上传题目</Menu.Item>
+                <Menu.Divider />
+                <Menu.Item key="logout">退出</Menu.Item>
+            </Menu>
+        )
     ) : (
         <Menu onClick={handleMenuClick}>
             <Menu.Item key="login">去登录</Menu.Item>
         </Menu>
     )
 
-    const sideMenu = logged&&userInfo.identity==='admin'?(
-        <Menu
-            theme="dark"
-            selectedKeys={selectedKeys}
-            onClick={handleRouter}
-            mode="inline">
-            <SubMenu
-                key="manage"
-                icon={<UserOutlined/>}
-                title='后台管理'
-            >
-                <Menu.Item key='manage/reviewProblems'>审核题目</Menu.Item>
+    const sideMenu = logged?(
+        userInfo.identity==='admin'? (
+            <Menu
+                theme="dark"
+                selectedKeys={selectedKeys}
+                onClick={handleRouter}
+                mode="inline">
+                <SubMenu
+                    key="manage"
+                    icon={<UserOutlined/>}
+                    title='后台管理'
+                >
+                    <Menu.Item key='manage/reviewProblems'>审核题目</Menu.Item>
 
-            </SubMenu>
-            <Menu.Item key="home" icon={<PieChartOutlined />}>首页</Menu.Item>
-            <Menu.Item key="problems" icon={<PieChartOutlined />}>题库</Menu.Item>
-            <Menu.Item key="contests" icon={<DesktopOutlined />}>比赛</Menu.Item>
-            <Menu.Item key="discussions" icon={<FileOutlined />}>讨论</Menu.Item>
-            <Menu.Item key="uploadProblem" icon={<FileOutlined />}>上传题目</Menu.Item>
-        </Menu>
+                </SubMenu>
+                <Menu.Item key="home" icon={<PieChartOutlined />}>首页</Menu.Item>
+                <Menu.Item key="problems" icon={<PieChartOutlined />}>题库</Menu.Item>
+                <Menu.Item key="contests" icon={<DesktopOutlined />}>比赛</Menu.Item>
+                <Menu.Item key="discussions" icon={<FileOutlined />}>讨论</Menu.Item>
+                <Menu.Item key="uploadProblem" icon={<FileOutlined />}>上传题目</Menu.Item>
+            </Menu>
+        ) : (
+            <Menu
+                theme="dark"
+                selectedKeys={selectedKeys}
+                onClick={handleRouter}
+                mode="inline">
+                <Menu.Item key="home" icon={<PieChartOutlined />}>首页</Menu.Item>
+                <Menu.Item key="problems" icon={<PieChartOutlined />}>题库</Menu.Item>
+                <Menu.Item key="contests" icon={<DesktopOutlined />}>比赛</Menu.Item>
+                <Menu.Item key="discussions" icon={<FileOutlined />}>讨论</Menu.Item>
+                <Menu.Item key="uploadProblem" icon={<FileOutlined />}>上传题目</Menu.Item>
+            </Menu>
+        )
+
     ) : (
         <Menu
             theme="dark"
@@ -158,7 +172,6 @@ function Index2(props){
             <Menu.Item key="problems" icon={<PieChartOutlined />}>题库</Menu.Item>
             <Menu.Item key="contests" icon={<DesktopOutlined />}>比赛</Menu.Item>
             <Menu.Item key="discussions" icon={<FileOutlined />}>讨论</Menu.Item>
-            <Menu.Item key="uploadProblem" icon={<FileOutlined />}>上传题目</Menu.Item>
         </Menu>
     )
 

@@ -1,7 +1,10 @@
 import React from "react";
-import {Button, Form, Input, Select} from "antd";
+import {Button, Form, Input, message, Select} from "antd";
+import http from "../../../utils/http";
+import utils from "../../../utils/utils";
 
 export default function UploadProblem(props){
+    const {route, history, location} = props;
     const layout = {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
@@ -138,7 +141,29 @@ export default function UploadProblem(props){
 
 
     function handleFormFinished(values){
+        for(let key in values){
+            if(values[key]===undefined){
+                values[key] = ''
+            }
+        }
         console.log('uploadForm:', values);
+
+        http.post('/upload/problem', utils.makeFormData(values))
+            .then(res => {
+                console.log('uploadProblem:', res);
+                if(res.data.isOk){
+                    message.success('题目上传成功！').then(() => {
+                        scrollTo(0, 0);
+                        window.location.reload();
+                    });
+
+                } else {
+                    message.error(res.data.errMsg);
+                }
+            })
+            .catch(err => {
+                message.error('上传题目失败!');
+            })
 
     }
 
