@@ -146,6 +146,8 @@ export default function UploadProblem(props){
                 values[key] = ''
             }
         }
+        let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+        values['uploader'] = userInfo.username;
         console.log('uploadForm:', values);
 
         http.post('/upload/problem', utils.makeFormData(values))

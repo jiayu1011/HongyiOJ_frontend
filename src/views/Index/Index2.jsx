@@ -1,4 +1,4 @@
-import {Layout, Menu, Breadcrumb, Dropdown, Button, message} from 'antd';
+import {Layout, Menu, Breadcrumb, Dropdown, Button, message, Modal} from 'antd';
 import {
     DesktopOutlined,
     PieChartOutlined,
@@ -45,10 +45,17 @@ function Index2(props){
         username: '未登录',
 
     });
-    // const [breadcrumb, setBreadcrumb] = useState([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
 
-
+    function logout(){
+        http.get('/logout').then((res) => {
+            console.log('logout:', res);
+        })
+        sessionStorage.clear();
+        message.info('登录已注销!');
+        history.push('/login');
+    }
 
     function onCollapse(collapsed){
         console.log(collapsed);
@@ -57,12 +64,7 @@ function Index2(props){
 
     function handleMenuClick(item){
         if (item.key === 'logout') {
-            http.get('/logout').then((res) => {
-                console.log('logout:', res);
-            })
-            sessionStorage.clear();
-            message.info('登录已注销!');
-            history.push('/login');
+            setIsModalVisible(true);
         } else {
             history.push(item.key);
         }
@@ -72,6 +74,7 @@ function Index2(props){
         // console.log(item);
         history.push('/' + item.key);
     }
+
 
     function redirectToHome(){
         let path = props.location.pathname;
@@ -202,6 +205,17 @@ function Index2(props){
                         </div>
                     </div>
                 </Header>
+                <Modal
+                    title='提示'
+                    visible={isModalVisible}
+                    onOk={logout}
+                    onCancel={() => {
+                        message.info('登出已取消!');
+                        setIsModalVisible(false);
+                    }}
+                >
+                    <div>确认要登出吗?</div>
+                </Modal>
                 <Content>
                     <div className='content'>
                         <MyBreadCrumb myProps={props}></MyBreadCrumb>

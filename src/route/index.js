@@ -13,6 +13,7 @@ import ContestList from "../views/Index/Contests/ContestList/ContestList";
 import Manage from "../views/Manage/Manage";
 import Review from "../views/Manage/Review/Review";
 import UploadProblem from "../views/Index/UploadProblem/UploadProblem";
+import Mobile from "../components/Mobile";
 
 
 function getToken() {
@@ -22,15 +23,17 @@ function getToken() {
 
 const routes = [
     {
+        path: '/mobile',
+        component: Mobile,
+    },
+    {
         path: '/login',
         component: Login2,
     },
     {
         path: '/forget',
         component: Forget,
-
     },
-
     {
         path: '/',
         // exact: true,
