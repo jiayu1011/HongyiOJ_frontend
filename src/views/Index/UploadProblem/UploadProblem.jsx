@@ -1,5 +1,5 @@
-import React from "react";
-import {Button, Form, Input, message, Select} from "antd";
+import React, {useEffect, useState} from "react";
+import {Alert, Button, Form, Input, message, Select} from "antd";
 import http from "../../../utils/http";
 import utils from "../../../utils/utils";
 
@@ -140,6 +140,9 @@ export default function UploadProblem(props){
     }
 
 
+    const [cnt, setCnt] = useState(4);
+
+
     function handleFormFinished(values){
         for(let key in values){
             if(values[key]===undefined){
@@ -173,8 +176,21 @@ export default function UploadProblem(props){
 
     }
 
+    useEffect(() => {
+
+    }, [])
+
+    const alert = (
+        <Alert
+            message={'请先登录后操作! 页面将在'+cnt+'秒后跳转到登录页面'}
+            type='warning'
+            showIcon
+        />
+    )
+
     return (
         <div>
+            {alert}
             <div>上传题目</div>
             <div>
                 <Form

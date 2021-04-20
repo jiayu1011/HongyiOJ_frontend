@@ -1,30 +1,33 @@
 import { combineReducers } from "redux";
 import {
-    LOGIN_SUCCESS,
+    SET_USERINFO,
+    SET_LOGGED,
 
 } from "../actions";
 
 export const initialState = {
     userInfo: {
         avatar: 'https://th.bing.com/th/id/OIP.WfMx-_qguVTIb7zoVdf9egAAAA?pid=ImgDet&rs=1',
-        username: '123',
-        password: '321',
 
+    },
+    logged: false,
+
+}
+
+const reducer = function (state, action){
+    switch (action.type){
+        case SET_USERINFO:
+            return Object.assign({}, state, {
+                userInfo: action.userInfo
+            })
+        case SET_LOGGED:
+            return Object.assign({}, state, {
+                logged: action.logged
+            })
+
+        default:
+            return state;
     }
 }
 
-const reducers = combineReducers({
-    userInfo: function (state={}, action){
-        switch (action.type){
-            case LOGIN_SUCCESS:
-                return {
-                    ...state,
-                    loading: action.payload
-                }
-            default:
-                return state;
-        }
-    }
-})
-
-export default reducers
+export default reducer

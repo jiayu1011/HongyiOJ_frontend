@@ -20,23 +20,10 @@ import './style/index.scss'
 
 
 ReactDOM.render(
-    // <BrowserRouter>
-    //     <Switch>
-    //         <Route exact path='/' component={Index}/>
-    //         <Route exact path='/login' component={Login}/>
-    //         <Route exact path='/forget' component={Forget}/>
-    //
-    //
-    //     </Switch>
-    // </BrowserRouter>,
-    <Provider store={store}>
-        <ConfigProvider locale={zhCN}>
-            <BrowserRouter>
-                {renderRoutes(routes)}
-            </BrowserRouter>
 
-        </ConfigProvider>
-    </Provider>,
+    <BrowserRouter>
+        {renderRoutes(routes)}
+    </BrowserRouter>,
     document.getElementById('root')
 );
 

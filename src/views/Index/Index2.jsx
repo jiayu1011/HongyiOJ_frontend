@@ -17,6 +17,7 @@ import utils from "../../utils/utils";
 import moment from 'moment';
 import MyFooter from "../../components/MyFooter";
 import MyBreadCrumb from "../../components/MyBreadCrumb";
+import store from "../../store";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -27,6 +28,7 @@ function Index2(props){
 
     const history = props.history;
     const route = props.route;
+    const state = store.getState();
 
     //中英文菜单专栏数组
     const englishMenuArr = [
@@ -37,7 +39,6 @@ function Index2(props){
     ]
 
 
-    const [logged, setLogged] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
     const [selectedKeys, setSelectedKeys] = useState(['']);
     const [userInfo, setUserInfo] = useState({
@@ -86,8 +87,7 @@ function Index2(props){
 
     //初始化信息
     useEffect(() => {
-        if('userInfo' in sessionStorage){
-            setLogged(true);
+        if(state.logged){
             setUserInfo(JSON.parse(sessionStorage.getItem('userInfo')));
         }
 
@@ -105,7 +105,7 @@ function Index2(props){
 
 
     //用户下拉选项单
-    const userDropdownMenu = logged? (
+    const userDropdownMenu = state.logged? (
         userInfo.identity==='admin'? (
             <Menu onClick={handleMenuClick}>
                 <Menu.Item key="basicInfo">基本资料</Menu.Item>
@@ -130,7 +130,7 @@ function Index2(props){
         </Menu>
     )
 
-    const sideMenu = logged?(
+    const sideMenu = state.logged?(
         userInfo.identity==='admin'? (
             <Menu
                 theme="dark"

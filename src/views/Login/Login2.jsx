@@ -2,18 +2,20 @@ import React, {useState, useEffect} from "react";
 import {Link, useHistory} from "react-router-dom";
 import {LoadingOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector, useStore} from "react-redux";
-import {LOGIN_SUCCESS} from "../../store/actions";
+import {setLoggedAction, setUserInfoAction} from "../../store/actions";
 
 import { message, notification } from 'antd'
 
 import './Login.scss'
 import http from "../../utils/http";
 import utils from "../../utils/utils";
+import store from '../../store'
 
 
 function Login2 (props){
 
     const {history} = props;
+    const state = store.getState();
 
     const [autoComplete, setAutoComplete] = useState('off');
     const [loginType, setLoginType] = useState(true);
@@ -54,6 +56,9 @@ function Login2 (props){
             if(res.data.isOk){
                 sessionStorage.setItem('token', res.data.token);
                 sessionStorage.setItem('userInfo', JSON.stringify(res.data.userInfo));
+                store.dispatch(setUserInfoAction(res.data.userInfo));
+                store.dispatch(setLoggedAction(true));
+
                 message.success('登录成功');
 
                 history.push('/home');
