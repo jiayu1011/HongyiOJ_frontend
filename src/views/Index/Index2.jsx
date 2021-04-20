@@ -1,4 +1,4 @@
-import {Layout, Menu, Breadcrumb, Dropdown, Button} from 'antd';
+import {Layout, Menu, Breadcrumb, Dropdown, Button, message} from 'antd';
 import {
     DesktopOutlined,
     PieChartOutlined,
@@ -15,6 +15,8 @@ import Avatar from "antd/es/avatar/avatar";
 import http from "../../utils/http";
 import utils from "../../utils/utils";
 import moment from 'moment';
+import MyFooter from "../../components/MyFooter";
+import MyBreadCrumb from "../../components/MyBreadCrumb";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -43,9 +45,7 @@ function Index2(props){
         username: '未登录',
 
     });
-    const [breadcrumb, setBreadcrumb] = useState([]);
-
-
+    // const [breadcrumb, setBreadcrumb] = useState([]);
 
 
 
@@ -57,13 +57,13 @@ function Index2(props){
 
     function handleMenuClick(item){
         if (item.key === 'logout') {
-            http.get('logout/').then((res) => {
+            http.get('/logout').then((res) => {
                 console.log('logout:', res);
-                sessionStorage.clear();
-                history.push('/login');
             })
+            sessionStorage.clear();
+            message.info('登录已注销!');
+            history.push('/login');
         } else {
-
             history.push(item.key);
         }
     }
@@ -73,32 +73,28 @@ function Index2(props){
         history.push('/' + item.key);
     }
 
-
-    //初始化信息
-    useEffect(() => {
-        // console.log(props);
-        // console.log(history);
-        // console.log(sessionStorage);
-
-        if('userInfo' in sessionStorage){
-            setLogged(true);
-            setUserInfo(JSON.parse(sessionStorage.getItem('userInfo')));
-
-        }
-
+    function redirectToHome(){
         let path = props.location.pathname;
         if(path==='/'){
             history.push('/home');
         }
+    }
 
 
+    //初始化信息
+    useEffect(() => {
+        if('userInfo' in sessionStorage){
+            setLogged(true);
+            setUserInfo(JSON.parse(sessionStorage.getItem('userInfo')));
+        }
 
+        redirectToHome();
     }, [])
 
     //切换专栏时调整breadcrumb
     useEffect(() => {
         let pathArr = props.location.pathname.split('/');
-        setBreadcrumb(pathArr.map((item) => chineseMenuArr[englishMenuArr.indexOf(item)]));
+        // setBreadcrumb(pathArr.map((item) => chineseMenuArr[englishMenuArr.indexOf(item)]));
         // console.log([pathArr[1]]);
         setSelectedKeys([pathArr[1]]);
 
@@ -107,15 +103,62 @@ function Index2(props){
 
     //用户下拉选项单
     const userDropdownMenu = logged? (
-        <Menu onClick={handleMenuClick}>
-            <Menu.Item key="basic-info">基本资料</Menu.Item>
-            <Menu.Item key="modify-password">修改密码</Menu.Item>
-            <Menu.Divider />
-            <Menu.Item key="logout">退出</Menu.Item>
-        </Menu>
+        userInfo.identity==='admin'?
+        (
+            <Menu onClick={handleMenuClick}>
+                <Menu.Item key="basicInfo">基本资料</Menu.Item>
+                <Menu.Item key="modifyPassword">修改密码</Menu.Item>
+                <Menu.Item key="manage">后台管理</Menu.Item>
+                <Menu.Item key="uploadProblem">上传题目</Menu.Item>
+                <Menu.Divider />
+                <Menu.Item key="logout">退出</Menu.Item>
+            </Menu>
+        ): (
+                <Menu onClick={handleMenuClick}>
+                    <Menu.Item key="basicInfo">基本资料</Menu.Item>
+                    <Menu.Item key="modifyPassword">修改密码</Menu.Item>
+                    <Menu.Item key="uploadProblem">上传题目</Menu.Item>
+                    <Menu.Divider />
+                    <Menu.Item key="logout">退出</Menu.Item>
+                </Menu>
+            )
     ) : (
         <Menu onClick={handleMenuClick}>
             <Menu.Item key="login">去登录</Menu.Item>
+        </Menu>
+    )
+
+    const sideMenu = logged&&userInfo.identity==='admin'?(
+        <Menu
+            theme="dark"
+            selectedKeys={selectedKeys}
+            onClick={handleRouter}
+            mode="inline">
+            <SubMenu
+                key="manage"
+                icon={<UserOutlined/>}
+                title='后台管理'
+            >
+                <Menu.Item key='manage/reviewProblems'>审核题目</Menu.Item>
+
+            </SubMenu>
+            <Menu.Item key="home" icon={<PieChartOutlined />}>首页</Menu.Item>
+            <Menu.Item key="problems" icon={<PieChartOutlined />}>题库</Menu.Item>
+            <Menu.Item key="contests" icon={<DesktopOutlined />}>比赛</Menu.Item>
+            <Menu.Item key="discussions" icon={<FileOutlined />}>讨论</Menu.Item>
+            <Menu.Item key="uploadProblem" icon={<FileOutlined />}>上传题目</Menu.Item>
+        </Menu>
+    ) : (
+        <Menu
+            theme="dark"
+            selectedKeys={selectedKeys}
+            onClick={handleRouter}
+            mode="inline">
+            <Menu.Item key="home" icon={<PieChartOutlined />}>首页</Menu.Item>
+            <Menu.Item key="problems" icon={<PieChartOutlined />}>题库</Menu.Item>
+            <Menu.Item key="contests" icon={<DesktopOutlined />}>比赛</Menu.Item>
+            <Menu.Item key="discussions" icon={<FileOutlined />}>讨论</Menu.Item>
+            <Menu.Item key="uploadProblem" icon={<FileOutlined />}>上传题目</Menu.Item>
         </Menu>
     )
 
@@ -129,33 +172,7 @@ function Index2(props){
         <Layout style={{ minHeight: '100vh' }}>
             <Sider className="sider"  collapsed={collapsed} onCollapse={onCollapse}>
                 <div className="logo" onClick={() => history.push('/home')}>Hongyi OJ</div>
-                <Menu
-                    theme="dark"
-                    selectedKeys={selectedKeys}
-                    onClick={handleRouter}
-                    mode="inline">
-                    <Menu.Item key="home" icon={<PieChartOutlined />}>
-                        首页
-                    </Menu.Item>
-                    <Menu.Item key="problems" icon={<PieChartOutlined />}>
-                        题库
-                    </Menu.Item>
-                    <Menu.Item key="contests" icon={<DesktopOutlined />}>
-                        比赛
-                    </Menu.Item>
-                    {/*<SubMenu key="sub1" icon={<UserOutlined />} title="User">*/}
-                    {/*    <Menu.Item key="3">Tom</Menu.Item>*/}
-                    {/*    <Menu.Item key="4">Bill</Menu.Item>*/}
-                    {/*    <Menu.Item key="5">Alex</Menu.Item>*/}
-                    {/*</SubMenu>*/}
-                    {/*<SubMenu key="sub2" icon={<TeamOutlined />} title="Team">*/}
-                    {/*    <Menu.Item key="6">Team 1</Menu.Item>*/}
-                    {/*    <Menu.Item key="8">Team 2</Menu.Item>*/}
-                    {/*</SubMenu>*/}
-                    <Menu.Item key="discussions" icon={<FileOutlined />}>
-                        讨论
-                    </Menu.Item>
-                </Menu>
+                {sideMenu}
             </Sider>
             <Layout className="site-layout">
                 <Header className="site-layout-background" style={{ padding: 0 }}>
@@ -174,10 +191,7 @@ function Index2(props){
                 </Header>
                 <Content>
                     <div className='content'>
-
-                        <Breadcrumb>
-                            {breadcrumb.map((item, index) => <Breadcrumb.Item key={index}>{item}</Breadcrumb.Item>)}
-                        </Breadcrumb>
+                        <MyBreadCrumb myProps={props}></MyBreadCrumb>
                         <div>
                             {renderRoutes(route.routes)}
                         </div>
@@ -185,7 +199,7 @@ function Index2(props){
 
 
                 </Content>
-                <Footer style={{ textAlign: 'center' }}>Hongyi OJ ©2021 Created by Jiayu1011</Footer>
+                <Footer><MyFooter></MyFooter></Footer>
             </Layout>
         </Layout>
     )

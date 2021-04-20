@@ -44,7 +44,7 @@ class Index extends React.Component {
         const { history } = this.props
         const { key } = item
         if (key === 'logout') {
-            http.get('logout/').then((res) => {
+            http.get('/logout').then((res) => {
                 console.log(res);
                 sessionStorage.clear();
                 history.push('/login');

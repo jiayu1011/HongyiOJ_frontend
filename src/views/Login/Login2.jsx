@@ -11,7 +11,9 @@ import http from "../../utils/http";
 import utils from "../../utils/utils";
 
 
-function Login2 (){
+function Login2 (props){
+
+    const {history} = props;
 
     const [autoComplete, setAutoComplete] = useState('off');
     const [loginType, setLoginType] = useState(true);
@@ -27,12 +29,7 @@ function Login2 (){
     });
     const [activeClass, setActiveClass] = useState('')
 
-    const dispatch = useDispatch();
-    const store = useStore();
-    const history = useHistory();
-
     useEffect(() => {
-
         if(loginType){
             setActiveClass('')
         } else {
@@ -52,7 +49,7 @@ function Login2 (){
         }
         setLoading(true);
 
-        http.post('login/', utils.makeFormData(loginForm)).then(res => {
+        http.post('/login', utils.makeFormData(loginForm)).then(res => {
             console.log('login:', res);
             if(res.data.isOk){
                 sessionStorage.setItem('token', res.data.token);
@@ -90,7 +87,7 @@ function Login2 (){
         }
 
 
-        http.post('register/', utils.makeFormData(registerForm)).then(res => {
+        http.post('/register', utils.makeFormData(registerForm)).then(res => {
             console.log('register:', res);
             if(res.data.isOk){
                 notification.success({
@@ -100,7 +97,7 @@ function Login2 (){
                 })
                 setTimeout(() => {
                     // 注册成功后，直接登录
-                    http.post('login/', utils.makeFormData({
+                    http.post('/login', utils.makeFormData({
                         username: registerForm.username,
                         password: registerForm.password
                     })).then(res => {

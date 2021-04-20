@@ -1,7 +1,4 @@
-import App from "../App";
-import Login from "../views/Login/Login";
 import Forget from "../views/Login/Forget";
-import Index from "../views/Index";
 import Problems from "../views/Index/Problems/Problems";
 import Contests from "../views/Index/Contests/Contests";
 import Home from "../views/Index/Home/Home";
@@ -9,9 +6,13 @@ import Discussions from "../views/Index/Discusstions/Discussions";
 import NotFound from "../components/NotFound";
 import Login2 from "../views/Login/Login2";
 import Index2 from "../views/Index/Index2";
-import Redirect from "../components/Redirect";
 import ProblemInfo from "../views/Index/Problems/ProblemInfo/ProblemInfo";
 import ContestInfo from "../views/Index/Contests/ContestInfo/ContestInfo";
+import ProblemList from "../views/Index/Problems/ProblemList/ProblemList";
+import ContestList from "../views/Index/Contests/ContestList/ContestList";
+import Manage from "../views/Manage/Manage";
+import Review from "../views/Manage/Review/Review";
+import UploadProblem from "../views/Index/UploadProblem/UploadProblem";
 
 
 function getToken() {
@@ -42,38 +43,60 @@ const routes = [
             },
             {
                 path: '/problems',
-                exact: true,
                 component: Problems,
-            },
-            {
-                path: '/problems/:problemId',
-                exact: true,
-                component: ProblemInfo,
+                routes: [
+                    {
+                        path: '/problems/list',
+                        exact: true,
+                        component: ProblemList,
+                    },
+                    {
+                        path: '/problems/:problemId',
+                        exact: true,
+                        component: ProblemInfo,
+                    },
+                ]
             },
             {
                 path: '/contests',
-                exact: true,
                 component: Contests,
-            },
-            {
-                path: '/contests/:contestId',
-                exact: true,
-                component: ContestInfo,
+                routes: [
+                    {
+                        path: '/contests/list',
+                        exact: true,
+                        component: ContestList,
+                    },
+                    {
+                        path: '/contests/:contestId',
+                        exact: true,
+                        component: ContestInfo,
+                    },
+                ]
             },
             {
                 path: '/discussions',
                 component: Discussions,
             },
-            //若并没有匹配到上述所有路径则404
+            {
+                path: '/uploadProblem',
+                component: UploadProblem,
+            },
+            {
+                path: '/manage',
+                component: Manage,
+                routes: [
+                    {
+                        path: '/manage/reviewProblems',
+                        exact: true,
+                        component: Review,
+                    }
+                ]
+            },
+            //若并没有匹配到上述所有路径则404,此部分一定要放到最后面
             {
                 path: '*',
                 component: NotFound
             }
-
-
-
-
-
 
         ]
     },
