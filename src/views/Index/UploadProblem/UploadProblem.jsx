@@ -2,13 +2,32 @@ import React, {useEffect, useState} from "react";
 import {Alert, Button, Form, Input, message, Select} from "antd";
 import http from "../../../utils/http";
 import utils from "../../../utils/utils";
+import store from "../../../store";
 
 export default function UploadProblem(props){
     const {route, history, location} = props;
+    const state = store.getState();
     const layout = {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
     };
+
+    const exampleLengthLimit = {
+        problemName: 100,
+        problemTags: 100,
+        // problemDiff doesn't need limit
+        problemBg: 1000,
+        problemDes: 5000,
+        timeLimit: 10,
+        memoryLimit: 10,
+        inputFormat: 1000,
+        outputFormat: 1000,
+        ioExamples: 1000,
+        problemTips: 1000,
+        dataRange: 1000,
+        dataGenerator: 5000,
+        stdProgram: 5000,
+    }
 
     const exampleProblem = {
         problemName: '[NOIP2008 提高组] 传纸条',
@@ -139,7 +158,6 @@ export default function UploadProblem(props){
 
     }
 
-
     const [cnt, setCnt] = useState(4);
 
 
@@ -153,22 +171,28 @@ export default function UploadProblem(props){
         values['uploader'] = userInfo.username;
         console.log('uploadForm:', values);
 
-        http.post('/upload/problem', utils.makeFormData(values))
-            .then(res => {
-                console.log('uploadProblem:', res);
-                if(res.data.isOk){
-                    message.success('题目上传成功！').then(() => {
-                        scrollTo(0, 0);
-                        window.location.reload();
-                    });
+        let headers = {}
+        if(state.logged){
+            headers.Authorization = sessionStorage.getItem('token')
+        }
 
-                } else {
-                    message.error(res.data.errMsg);
-                }
-            })
-            .catch(err => {
-                message.error('上传题目失败!');
-            })
+        http.post('/upload/problem', utils.makeFormData(values), {
+            headers: headers
+        }).then(res => {
+            console.log('uploadProblem:', res);
+            if(res.data.isOk){
+                message.success('题目上传成功！').then(() => {
+                    scrollTo(0, 0);
+                    window.location.reload();
+                });
+
+            } else {
+                message.error(res.data.errMsg);
+            }
+        })
+        .catch(err => {
+            message.error('上传题目失败!');
+        })
 
     }
 
@@ -177,20 +201,30 @@ export default function UploadProblem(props){
     }
 
     useEffect(() => {
+        if(!state.logged){
+            setTimeout(() => {
+                if(cnt===1){
+                    history.push('/login');
+                } else{
+                    setCnt(cnt-1);
+                }
+            }, 1000)
+        }
 
-    }, [])
+    })
 
-    const alert = (
-        <Alert
-            message={'请先登录后操作! 页面将在'+cnt+'秒后跳转到登录页面'}
-            type='warning'
-            showIcon
-        />
-    )
 
     return (
         <div>
-            {alert}
+            {
+                state.logged ? null : (
+                    <Alert
+                        message={'请先登录后操作! 页面将在'+cnt+'秒后跳转到登录页面'}
+                        type='warning'
+                        showIcon
+                    />
+                )
+            }
             <div>上传题目</div>
             <div>
                 <Form
@@ -205,13 +239,19 @@ export default function UploadProblem(props){
                         name='problemName'
                         rules={[{required: true}]}
                     >
-                        <Input placeholder={'例:' +exampleProblem.problemName}/>
+                        <Input
+                            placeholder={'例:' +exampleProblem.problemName}
+                            maxLength={exampleLengthLimit.problemName}
+                        />
                     </Form.Item>
                     <Form.Item
                         label='题目标签（涉及的算法思想,多个词组用","隔开）'
                         name='problemTags'
                     >
-                        <Input placeholder={'例:' +exampleProblem.problemTags}/>
+                        <Input
+                            placeholder={'例:' +exampleProblem.problemTags}
+                            maxLength={exampleLengthLimit.problemTags}
+                        />
                     </Form.Item>
                     <Form.Item
                         label='题目难度'
@@ -232,6 +272,8 @@ export default function UploadProblem(props){
                         <Input.TextArea
                             rows={8}
                             placeholder={'例:\n'+exampleProblem.problemBg}
+                            maxLength={exampleLengthLimit.problemBg}
+                            showCount
                         />
                     </Form.Item>
                     <Form.Item
@@ -242,19 +284,27 @@ export default function UploadProblem(props){
                         <Input.TextArea
                             rows={8}
                             placeholder={'例:\n'+exampleProblem.problemDes}
+                            maxLength={exampleLengthLimit.problemDes}
+                            showCount
                         />
                     </Form.Item>
                     <Form.Item
                         label='时间限制（允许的最长运行时间,单位为ms）'
                         name='timeLimit'
                     >
-                        <Input placeholder={'例:' +exampleProblem.timeLimit}/>
+                        <Input
+                            placeholder={'例:' +exampleProblem.timeLimit}
+                            maxLength={exampleLengthLimit.timeLimit}
+                        />
                     </Form.Item>
                     <Form.Item
                         label='空间限制（运行时允许占用的最大空间,单位为MB）'
                         name='memoryLimit'
                     >
-                        <Input placeholder={'例:' +exampleProblem.memoryLimit}/>
+                        <Input
+                            placeholder={'例:' +exampleProblem.memoryLimit}
+                            maxLength={exampleLengthLimit.memoryLimit}
+                        />
                     </Form.Item>
                     <Form.Item
                         label='输入格式（对于输入格式的描述）'
@@ -263,6 +313,8 @@ export default function UploadProblem(props){
                         <Input.TextArea
                             rows={8}
                             placeholder={'例:\n'+exampleProblem.inputFormat}
+                            maxLength={exampleLengthLimit.inputFormat}
+                            showCount
                         />
                     </Form.Item>
                     <Form.Item
@@ -272,6 +324,8 @@ export default function UploadProblem(props){
                         <Input.TextArea
                             rows={8}
                             placeholder={'例:\n'+exampleProblem.outputFormat}
+                            maxLength={exampleLengthLimit.outputFormat}
+                            showCount
                         />
                     </Form.Item>
                     <Form.Item
@@ -281,6 +335,8 @@ export default function UploadProblem(props){
                         <Input.TextArea
                             rows={8}
                             placeholder={'（1-2个输入输出样例,每个样例以"#样例n"开\\n头,每个输入输出间用"-----"上下隔开）\n'+'例:\n'+exampleProblem.ioExamples}
+                            maxLength={exampleLengthLimit.ioExamples}
+                            showCount
                         />
                     </Form.Item>
                     <Form.Item
@@ -290,6 +346,8 @@ export default function UploadProblem(props){
                         <Input.TextArea
                             rows={8}
                             placeholder={'例:\n'+exampleProblem.problemTips}
+                            maxLength={exampleLengthLimit.problemTips}
+                            showCount
                         />
                     </Form.Item>
                     <Form.Item
@@ -299,6 +357,8 @@ export default function UploadProblem(props){
                         <Input.TextArea
                             rows={8}
                             placeholder={'例:\n'+exampleProblem.dataRange}
+                            maxLength={exampleLengthLimit.dataRange}
+                            showCount
                         />
                     </Form.Item>
                     <Form.Item
@@ -308,6 +368,8 @@ export default function UploadProblem(props){
                         <Input.TextArea
                             rows={8}
                             placeholder={'例:\n'+exampleProblem.dataGenerator}
+                            maxLength={exampleLengthLimit.dataGenerator}
+                            showCount
                         />
                     </Form.Item>
                     <Form.Item
@@ -317,6 +379,8 @@ export default function UploadProblem(props){
                         <Input.TextArea
                             rows={8}
                             placeholder={'例:\n'+exampleProblem.stdProgram}
+                            maxLength={exampleLengthLimit.stdProgram}
+                            showCount
                         />
                     </Form.Item>
 

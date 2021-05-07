@@ -5,14 +5,29 @@ import {
 
 } from "../actions";
 
-export const initialState = {
+const defaultState = {
     userInfo: {
-        avatar: 'https://th.bing.com/th/id/OIP.WfMx-_qguVTIb7zoVdf9egAAAA?pid=ImgDet&rs=1',
+        avatarUrl: 'https://th.bing.com/th/id/OIP.WfMx-_qguVTIb7zoVdf9egAAAA?pid=ImgDet&rs=1',
+        username: '',
+        password: '',
+        email: '',
+        identity: '',
+        acceptCnt: '',
 
     },
     logged: false,
+}
+
+const userInfo = sessionStorage.getItem('userInfo')? JSON.parse(sessionStorage.getItem('userInfo')):defaultState.userInfo
+const logged = !!sessionStorage.getItem('userInfo')
+
+export const initialState = {
+    userInfo: userInfo,
+    logged: logged,
 
 }
+
+
 
 const reducer = function (state, action){
     switch (action.type){

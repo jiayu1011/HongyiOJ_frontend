@@ -42,7 +42,6 @@ function Login2 (props){
 
     function handleLogin (event){
         event.preventDefault();
-        console.log('loginForm:', loginForm);
         if (!loginForm.username) {
             return message.error('用户名不能为空')
         }
@@ -67,11 +66,9 @@ function Login2 (props){
                 setLoading(false);
             }
 
-
-
         }).catch(err => {
             console.log(err);
-            message.error(err);
+            message.error('登录失败!');
             setLoading(false);
         })
 
@@ -123,7 +120,6 @@ function Login2 (props){
     }
 
     function toggleClass(){
-        console.log(loginType);
         if(loginType){
             // setLoginType(loginType);
             setRegisterForm({
@@ -179,7 +175,7 @@ function Login2 (props){
                             <input type="text" autoComplete={autoComplete} onChange={(event) => handleInputChange(event, 'login', 'username')} name="username" placeholder="用户名" />
                             <input type="password" onChange={(event) => handleInputChange(event, 'login', 'password')} name="password" placeholder="密码" />
                             <Link to="/forget">忘记密码</Link>
-                            <button type='submit' data-type="primary" disabled={loading ? true : false}>
+                            <button type='submit' data-type="primary" disabled={loading}>
                                 {loading ? <LoadingOutlined className="mr-5" /> : null}登录
                             </button>
                         </form>

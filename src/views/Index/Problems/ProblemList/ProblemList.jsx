@@ -1,25 +1,36 @@
 import React, {useEffect, useState} from "react";
 
 import './ProblemList.scss'
-import {Input, List, Avatar, Row, Col, Pagination} from "antd";
-import {SearchOutlined} from "@ant-design/icons";
+import {Input, List, Avatar, Row, Col, Pagination, Button, Form, Drawer, message} from "antd";
+import {LoadingOutlined, SearchOutlined} from "@ant-design/icons";
 import http from "../../../../utils/http";
+import {DEFAULT_PROBLEM_LIST_PAGESIZE} from '../../../../config'
+import store from "../../../../store";
+
 
 export default function ProblemList(props){
     const {history} = props;
-
-    const pageSize = 30;
     const {Search} = Input;
+    const state = store.getState();
 
+
+    const [pageSize, setPageSize] = useState(DEFAULT_PROBLEM_LIST_PAGESIZE);
+    const [loading, setLoading] = useState(false);
+    const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [problemList, setProblemList] = useState([
         {
             problemId: 'P10000',
+            status: 'unfinished',
             problemName: 'test1',
+            problemTags: 'algorithm1, algorithm2'
 
         },
         {
             problemId: 'P10001',
+            status: 'unfinished',
             problemName: 'test2',
+            problemTags: 'algorithm3, algorithm4',
+
         }
     ]);
     const [searchInput, setSearchInput] = useState('');
@@ -27,16 +38,29 @@ export default function ProblemList(props){
     const [currentPage, setCurrentPage] = useState(1);
 
     function getProblemList(){
+        console.log(state)
+        setLoading(true);
+        let params = {
+            pageSize: pageSize,
+            currentPage: currentPage,
+        }
+        let headers = {}
+        if(state.logged) {
+            params.username = state.userInfo.username
+            headers.Authorization = sessionStorage.getItem('token');
+        }
+
         http.get('/problem/list', {
-                params: {
-                    currentPage: currentPage,
-                }
-            },
-        ).then(res => {
+            params: params,
+            headers: headers
+        }).then(res => {
             console.log('problemList:', res);
             setProblemList(res.data.problemList);
+            setLoading(false);
             setResultSum(res.data.resultSum);
 
+        }).catch(err => {
+            message.error('请求题目列表失败!')
         })
     }
 
@@ -63,10 +87,6 @@ export default function ProblemList(props){
 
     }
 
-    function handlePageChange(pageNumber){
-        setCurrentPage(pageNumber);
-
-    }
 
     useEffect(() => {
         getProblemList();
@@ -75,6 +95,20 @@ export default function ProblemList(props){
 
     return(
         <div className='body'>
+            <Drawer
+                title='高级搜索'
+                placement='right'
+                closable={true}
+                onClose={() => {
+                    setIsDrawerVisible(false);
+                }}
+                visible={isDrawerVisible}
+            >
+                <div>题目内容</div>
+                <div>算法标签</div>
+                <Button type='primary'>搜索</Button>
+
+            </Drawer>
             <div className='body-title'>题目列表</div>
             <div className="search-part">
                 <Row className='search-row'>
@@ -83,7 +117,7 @@ export default function ProblemList(props){
                     </Col>
                     <Col span={20} style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                         <Search
-                            placeholder="请输入题目名称或题目编号"
+                            placeholder="请输入题目名称或题目编号（题目编号请以P开头）"
                             className='search-input'
                             onChange={handleSearchInputChange}
                             onSearch={handleProblemSearch}
@@ -102,7 +136,9 @@ export default function ProblemList(props){
 
                     </Col>
                     <Col span={4}>
-                        <div>高级搜索</div>
+                        <Button type='primary' onClick={() => {
+                            setIsDrawerVisible(true);
+                        }}>高级搜索</Button>
                     </Col>
                     <Col span={10}>
 
@@ -112,6 +148,7 @@ export default function ProblemList(props){
             </div>
 
             <div className="list-part">
+                {/*The head column size must fit the following list*/}
                 <Row >
                     <Col span={1}></Col>
                     <Col span={2}>
@@ -122,33 +159,51 @@ export default function ProblemList(props){
                     </Col>
                     <Col span={8}></Col>
                 </Row>
-                <List
-                    className='problem-list'
-                    itemLayout='horizontal'
-                    dataSource={problemList}
-                    renderItem={item => (
-                        <List.Item>
-                            <Row style={{width: '100%'}}>
-                                <Col span={1}></Col>
-                                <Col span={2}>
-                                    <div>{item.problemId}</div>
-                                </Col>
-                                <Col span={8}>
-                                    <a className='problem-name' href={item.problemId}>{item.problemName}</a>
-                                </Col>
-                                <Col span={8}></Col>
+                {
+                    loading? (
+                        <div style={{textAlign: 'center'}}>加载中...<LoadingOutlined /></div>
+                    ) : (
+                        <List
+                            className='problem-list'
+                            itemLayout='horizontal'
+                            dataSource={problemList}
+                            renderItem={item => (
+                                <List.Item>
+                                    <Row style={{width: '100%'}}>
+                                        <Col span={1}></Col>
+                                        <Col span={2}>
+                                            <div>{item.problemId}</div>
+                                        </Col>
+                                        <Col span={8}>
+                                            <a className='problem-name' href={'info/'+item.problemId}>{item.problemName}</a>
+                                        </Col>
+                                        <Col span={8}></Col>
 
 
-                            </Row>
+                                    </Row>
 
-                        </List.Item>
-                    )}
-                >
+                                </List.Item>
+                            )}
+                        >
 
-                </List>
+                        </List>
+                    )
+                }
+
             </div>
 
-            <Pagination showQuickJumper defaultCurrent={currentPage} total={problemList.length} onChange={handlePageChange} />
+            <Pagination
+                defaultCurrent={currentPage}
+                total={resultSum}
+                onChange={pageNumber => {setCurrentPage(pageNumber)}}
+                onShowSizeChange={(current, pageSize) => {
+                    setPageSize(pageSize);
+                    getProblemList();
+                }}
+                defaultPageSize={pageSize}
+                showTotal={total => `Total ${total} items`}
+                showQuickJumper
+            />
         </div>
     )
 

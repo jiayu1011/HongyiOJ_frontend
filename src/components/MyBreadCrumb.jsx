@@ -5,10 +5,10 @@ function MyBreadCrumb(props){
     const {myProps, history} = props;
 
     const englishMenuArr = [
-        'home', 'problems', 'contests', 'discussions', 'list'
+        'home', 'problems', 'contests', 'discussions', 'list', 'info'
     ]
     const chineseMenuArr = [
-        '首页', '题库', '比赛', '讨论', '列表'
+        '首页', '题库', '比赛', '讨论', '列表', '详情'
     ]
 
     const [breadcrumb, setBreadcrumb] = useState([])

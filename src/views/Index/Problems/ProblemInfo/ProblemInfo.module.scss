@@ -1,0 +1,34 @@
+.body{
+  font: {
+    size: 15px;
+  };
+
+  .body-title{
+    align-self: flex-start;
+    font: {
+      size: 30px;
+      weight: bold;
+
+    };
+
+  }
+
+
+  .problem-card{
+    width: 60%;
+
+    .problem-unit{
+      margin: 15px;
+
+      .unit-title{
+        font: {
+          size: 20px;
+          weight: bold;
+
+        };
+      }
+    }
+
+
+  }
+}

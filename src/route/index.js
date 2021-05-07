@@ -54,7 +54,7 @@ const routes = [
                         component: ProblemList,
                     },
                     {
-                        path: '/problems/:problemId',
+                        path: '/problems/info/:problemId',
                         exact: true,
                         component: ProblemInfo,
                     },
@@ -70,7 +70,7 @@ const routes = [
                         component: ContestList,
                     },
                     {
-                        path: '/contests/:contestId',
+                        path: '/contests/info/:contestId',
                         exact: true,
                         component: ContestInfo,
                     },
