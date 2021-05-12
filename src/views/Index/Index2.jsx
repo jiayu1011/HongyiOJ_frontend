@@ -18,6 +18,7 @@ import moment from 'moment';
 import MyFooter from "../../components/MyFooter";
 import MyBreadCrumb from "../../components/MyBreadCrumb";
 import store from "../../store";
+import qs from 'qs'
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -26,8 +27,7 @@ const { SubMenu } = Menu;
 
 function Index2(props){
 
-    const history = props.history;
-    const route = props.route;
+    const {location, history, route} = props
     const state = store.getState();
 
     //中英文菜单专栏数组
@@ -50,8 +50,16 @@ function Index2(props){
 
 
     function logout(){
-        http.get('/logout').then((res) => {
-            console.log('logout:', res);
+        let data = {
+            username: state.userInfo.username
+        }
+        http.put('/logout', qs.stringify(data), {
+
+        }).then((res) => {
+            console.log('登出:', res);
+        }).catch(err => {
+            console.log(err)
+            message.error('登出请求失败')
         })
         sessionStorage.clear();
         message.info('登录已注销!');
@@ -64,10 +72,11 @@ function Index2(props){
     }
 
     function handleMenuClick(item){
+        console.log(item)
         if (item.key === 'logout') {
             setIsModalVisible(true);
         } else {
-            history.push(item.key);
+            history.push('/' + item.key);
         }
     }
 
@@ -96,10 +105,46 @@ function Index2(props){
 
     //切换专栏时调整breadcrumb
     useEffect(() => {
-        let pathArr = props.location.pathname.split('/');
-        // setBreadcrumb(pathArr.map((item) => chineseMenuArr[englishMenuArr.indexOf(item)]));
-        // console.log([pathArr[1]]);
-        setSelectedKeys([pathArr[1]]);
+        let pathArr = location.pathname.split('/');
+        let sk = ''
+        switch (pathArr[1]){
+            case "problems":
+                sk = 'problems'
+                break
+            case "contests":
+                sk = 'contests'
+                break
+            case "discussions":
+                sk = 'discussions'
+                break
+            default:
+                switch (location.pathname){
+                    case "/home":
+                        sk = 'home'
+                        break
+                    case "/manage/reviewProblems":
+                        sk = 'manage/reviewProblems'
+                        break
+                    case "/problems/list":
+                        sk = 'problem'
+                        break
+                    case "/contests/list":
+                        sk = 'contests'
+                        break
+                    case "/discussions/list":
+                        sk = 'discussions'
+                        break
+                    case '/uploadProblem':
+                        sk = 'uploadProblem'
+                        break
+                    default:
+
+
+                }
+
+        }
+
+        setSelectedKeys(sk);
 
     }, [props.location.pathname]);
 
@@ -107,7 +152,7 @@ function Index2(props){
     //用户下拉选项单
     const userDropdownMenu = state.logged? (
         userInfo.identity==='admin'? (
-            <Menu onClick={handleMenuClick}>
+            <Menu onClick={(item) => handleMenuClick(item)}>
                 <Menu.Item key="basicInfo">基本资料</Menu.Item>
                 <Menu.Item key="modifyPassword">修改密码</Menu.Item>
                 <Menu.Item key="manage">后台管理</Menu.Item>
@@ -116,7 +161,7 @@ function Index2(props){
                 <Menu.Item key="logout">退出</Menu.Item>
             </Menu>
         ): (
-            <Menu onClick={handleMenuClick}>
+            <Menu onClick={(item) => handleMenuClick(item)}>
                 <Menu.Item key="basicInfo">基本资料</Menu.Item>
                 <Menu.Item key="modifyPassword">修改密码</Menu.Item>
                 <Menu.Item key="uploadProblem">上传题目</Menu.Item>
@@ -125,7 +170,7 @@ function Index2(props){
             </Menu>
         )
     ) : (
-        <Menu onClick={handleMenuClick}>
+        <Menu onClick={(item) => handleMenuClick(item)}>
             <Menu.Item key="login">去登录</Menu.Item>
         </Menu>
     )
@@ -135,7 +180,7 @@ function Index2(props){
             <Menu
                 theme="dark"
                 selectedKeys={selectedKeys}
-                onClick={handleRouter}
+                onClick={(item) => handleRouter(item)}
                 mode="inline">
                 <SubMenu
                     key="manage"
@@ -155,7 +200,7 @@ function Index2(props){
             <Menu
                 theme="dark"
                 selectedKeys={selectedKeys}
-                onClick={handleRouter}
+                onClick={(item) => handleRouter(item)}
                 mode="inline">
                 <Menu.Item key="home" icon={<PieChartOutlined />}>首页</Menu.Item>
                 <Menu.Item key="problems" icon={<PieChartOutlined />}>题库</Menu.Item>
@@ -169,7 +214,7 @@ function Index2(props){
         <Menu
             theme="dark"
             selectedKeys={selectedKeys}
-            onClick={handleRouter}
+            onClick={(item) => handleRouter(item)}
             mode="inline">
             <Menu.Item key="home" icon={<PieChartOutlined />}>首页</Menu.Item>
             <Menu.Item key="problems" icon={<PieChartOutlined />}>题库</Menu.Item>
@@ -208,7 +253,7 @@ function Index2(props){
                 <Modal
                     title='提示'
                     visible={isModalVisible}
-                    onOk={logout}
+                    onOk={() => logout}
                     onCancel={() => {
                         message.info('登出已取消!');
                         setIsModalVisible(false);
@@ -218,7 +263,7 @@ function Index2(props){
                 </Modal>
                 <Content>
                     <div className='content'>
-                        <MyBreadCrumb myProps={props}></MyBreadCrumb>
+                        {/*<MyBreadCrumb myProps={props}></MyBreadCrumb>*/}
                         <div>
                             {renderRoutes(route.routes)}
                         </div>

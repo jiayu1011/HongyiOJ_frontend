@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react'
-import {Breadcrumb} from "antd";
+import {Breadcrumb, Button, message} from "antd";
 import http from "../../../../utils/http";
 import style from './ProblemInfo.module.scss'
-import {UPLOAD_PROBLEM_TEST_STRUCTURE} from "../../../../config";
+import {UPLOAD_PROBLEM_STRUCTURE, UPLOAD_PROBLEM_TEST_STRUCTURE} from "../../../../config";
+import store from "../../../../store";
 
 function ProblemInfo(props){
-    const route = props.route;
-    const history = props.history;
+    const {route, history} = props
+    const state = store.getState()
+
 
     const titleDict = {
         problemBg: '题目背景',
@@ -16,22 +18,44 @@ function ProblemInfo(props){
         problemTips: '提示'
     }
 
-    const [problemInfo, setProblemInfo] = useState(UPLOAD_PROBLEM_TEST_STRUCTURE);
+    const [problemInfo, setProblemInfo] = useState(UPLOAD_PROBLEM_STRUCTURE);
 
 
     function getProblemInfo(){
         let pathArr = props.location.pathname.split('/');
         let currentId = pathArr[pathArr.length-1];
+        let params = {
+            problemId: currentId
+        }
+        let headers = {}
+        if(state.logged){
+            headers.Authorization = sessionStorage.getItem('token')
+        }
         http.get('/problem/list', {
-            params: {
-                problemId: currentId
-            }
+            params: params,
+            headers: headers
         }).then(res => {
-            console.log('problemInfo:', res);
-            setProblemInfo(res.data.problemList[0]);
+            console.log('题目详情:', res);
+            if(res.data.isOk){
+                setProblemInfo(res.data.problemList[0]);
+            } else {
+                message.error(res.data.errMsg)
+            }
 
 
+        }).catch(err => {
+            message.error('获取题目详情失败')
         })
+    }
+
+    function formatContent(str){
+        let urlPattern = /(https?:\/\/|www\.)[a-zA-Z_0-9\-@]+(\.\w[a-zA-Z_0-9\-:]+)+(\/[\(\)~#&\-=?\+\%/\.\w]+)?/g
+        str = str.replace(urlPattern, function (match){
+            // console.log(match)
+            return `<br/><img src="${match}" alt="${match}" height="" width=""/><br/>`
+        })
+
+        return str
     }
 
 
@@ -41,32 +65,60 @@ function ProblemInfo(props){
     }, [])
 
     return (
-        <div className={style.body}>
-            <div className='body-title'>{problemInfo.problemId} {problemInfo.problemName}</div>
-            <div className='problem-card'>
-                {problemInfo.problemBg===''? null:<div className='problem-unit'>
-                    <div className='unit-title'>题目背景</div>
-                    <div>{problemInfo.problemBg}</div>
-                </div>}
-                <div className='problem-unit'>
-                    <div className='unit-title'>题目描述</div>
-                    <div>{problemInfo.problemDes}</div>
-                </div>
-                <div className='problem-unit'>
-                    <div className='unit-title'>输入格式</div>
-                    <div>{problemInfo.inputFormat}</div>
-                </div>
-                <div className='problem-unit'>
-                    <div className='unit-title'>输出格式</div>
-                    <div>{problemInfo.outputFormat}</div>
-                </div>
-                <div className='problem-unit'>
-                    <div className='unit-title'>输入输出样例</div>
-                    <div>{problemInfo.ioExamples}</div>
-                </div>
+        <div>
+            <Breadcrumb>
+                <Breadcrumb.Item key='problems'><a href='/problems'>题库</a></Breadcrumb.Item>
+                <Breadcrumb.Item key='problem'><a href={'/problems/'+problemInfo.problemId}>{problemInfo.problemId}</a></Breadcrumb.Item>
+                <Breadcrumb.Item key='problem_info'><a href=''>题目详情</a></Breadcrumb.Item>
+            </Breadcrumb>
+            <div className={style.body}>
 
+                <div className='body-title'>{problemInfo.problemId} {problemInfo.problemName}</div>
+                <div style={{
+                    margin: '10px 0'
+                }}>
+
+                    <Button
+                        type='primary'
+                        onClick={() => history.push('/problems/'+problemInfo.problemId+'/submit')}
+                    >提交答案</Button>
+                    <Button
+                        type='dashed'
+                        style={{
+                            margin: '0 10px'
+                        }}
+                        onClick={() => history.push('/discussions/'+problemInfo.problemId)}
+                    >查看讨论</Button>
+                </div>
+                <div className='problem-card'>
+                    {problemInfo.problemBg===''? null:<div className='problem-unit'>
+                        <div className='unit-title'>题目背景</div>
+                        <div>{formatContent(problemInfo.problemBg)}</div>
+                    </div>}
+                    <div className='problem-unit'>
+                        <div className='unit-title'>题目描述</div>
+                        <div
+                            dangerouslySetInnerHTML={{__html: formatContent(problemInfo.problemDes)}}
+                        ></div>
+                    </div>
+                    <div className='problem-unit'>
+                        <div className='unit-title'>输入格式</div>
+                        <div>{formatContent(problemInfo.inputFormat)}</div>
+                    </div>
+                    <div className='problem-unit'>
+                        <div className='unit-title'>输出格式</div>
+                        <div>{formatContent(problemInfo.outputFormat)}</div>
+                    </div>
+                    <div className='problem-unit'>
+                        <div className='unit-title'>输入输出样例</div>
+                        <div>{formatContent(problemInfo.ioExamples)}</div>
+                    </div>
+
+
+                </div>
             </div>
         </div>
+
     )
 }
 

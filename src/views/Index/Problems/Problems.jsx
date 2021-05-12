@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {renderRoutes} from "react-router-config";
+import {Breadcrumb} from "antd";
 
 function Problems(props){
-    const route = props.route;
-    const history = props.history;
+    const {route, history, location} = props;
 
 
     function redirectToList(){
@@ -15,7 +15,7 @@ function Problems(props){
 
     useEffect(() => {
         redirectToList();
-    }, [props.location.pathname])
+    }, [location.pathname])
 
     return(
         <div>

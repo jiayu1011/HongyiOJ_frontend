@@ -2,8 +2,7 @@ import React, {useEffect} from "react";
 import {renderRoutes} from "react-router-config";
 
 function Contests(props){
-    const route = props.route;
-    const history = props.history;
+    const {route, routes, history, location} = props;
 
 
     function redirectToList(){
@@ -15,7 +14,7 @@ function Contests(props){
 
     useEffect(() => {
         redirectToList();
-    }, [props.location.pathname])
+    }, [location.pathname])
 
     return(
         <div>

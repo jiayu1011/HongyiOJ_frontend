@@ -96,6 +96,9 @@ function Home(props){
 
     return (
         <div className='home-parent'>
+            <Breadcrumb>
+                <Breadcrumb.Item key='home'><a href='/home'>首页</a></Breadcrumb.Item>
+            </Breadcrumb>
             <div className='home-container'>
 
                 <div className='home-content'>
@@ -147,8 +150,8 @@ function Home(props){
                             </Form>
 
                             <div className='jump-action'>
-                                <Button type='primary' onClick={handleCommonJumpSubmit}><SearchOutlined />跳转</Button>
-                                <Button type='danger' onClick={handleRandomJumpSubmit}><AimOutlined />随机跳题</Button>
+                                <Button type='primary' onClick={() => handleCommonJumpSubmit}><SearchOutlined />跳转</Button>
+                                <Button type='danger' onClick={() => handleRandomJumpSubmit}><AimOutlined />随机跳题</Button>
                             </div>
 
                         </div>
@@ -168,7 +171,7 @@ function Home(props){
                             <div className='contest-list'>
                                 {contestList.map((item,index) => {
                                     return (
-                                        <div key={index} id={item} onClick={handleContestJump}>{item}</div>
+                                        <div key={index} id={item} onClick={() => handleContestJump}>{item}</div>
                                     )
                                 })}
                             </div>

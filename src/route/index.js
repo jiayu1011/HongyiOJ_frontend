@@ -14,6 +14,9 @@ import Manage from "../views/Manage/Manage";
 import Review from "../views/Manage/Review/Review";
 import UploadProblem from "../views/Index/UploadProblem/UploadProblem";
 import Mobile from "../components/Mobile";
+import Forget2 from "../views/Login/Forget2";
+import ProblemSubmit from "../views/Index/Problems/ProblemSubmit/ProblemSubmit";
+import DiscussionList from "../views/Index/Discusstions/DiscussionList/DiscussionList";
 
 
 function getToken() {
@@ -32,7 +35,7 @@ const routes = [
     },
     {
         path: '/forget',
-        component: Forget,
+        component: Forget2,
     },
     {
         path: '/',
@@ -54,9 +57,14 @@ const routes = [
                         component: ProblemList,
                     },
                     {
-                        path: '/problems/info/:problemId',
+                        path: '/problems/:problemId',
                         exact: true,
                         component: ProblemInfo,
+                    },
+                    {
+                        path: '/problems/:problemId/submit',
+                        exact: true,
+                        component: ProblemSubmit,
                     },
                 ]
             },
@@ -70,7 +78,7 @@ const routes = [
                         component: ContestList,
                     },
                     {
-                        path: '/contests/info/:contestId',
+                        path: '/contests/:contestId',
                         exact: true,
                         component: ContestInfo,
                     },
@@ -79,6 +87,13 @@ const routes = [
             {
                 path: '/discussions',
                 component: Discussions,
+                routes: [
+                    {
+                        path: '/discussions/list',
+                        exact: true,
+                        component: DiscussionList
+                    }
+                ]
             },
             {
                 path: '/uploadProblem',

@@ -3,6 +3,7 @@ import {Alert, Button, Form, Input, message, Select} from "antd";
 import http from "../../../utils/http";
 import utils from "../../../utils/utils";
 import store from "../../../store";
+import {UPLOAD_PROBLEM_STRUCTURE} from "../../../config";
 
 export default function UploadProblem(props){
     const {route, history, location} = props;
@@ -159,7 +160,7 @@ export default function UploadProblem(props){
     }
 
     const [cnt, setCnt] = useState(4);
-
+    const [uploadForm, setUploadForm] = useState(UPLOAD_PROBLEM_STRUCTURE)
 
     function handleFormFinished(values){
         for(let key in values){

@@ -17,7 +17,8 @@ function Login2 (props){
     const {history} = props;
     const state = store.getState();
 
-    const [autoComplete, setAutoComplete] = useState('off');
+    const autoComplete = 'off'
+
     const [loginType, setLoginType] = useState(true);
     const [loading, setLoading] = useState(false);
     const [loginForm, setLoginForm] = useState({
@@ -51,7 +52,7 @@ function Login2 (props){
         setLoading(true);
 
         http.post('/login', utils.makeFormData(loginForm)).then(res => {
-            console.log('login:', res);
+            console.log('登录:', res);
             if(res.data.isOk){
                 sessionStorage.setItem('token', res.data.token);
                 sessionStorage.setItem('userInfo', JSON.stringify(res.data.userInfo));
@@ -185,12 +186,22 @@ function Login2 (props){
                             <div className="overlay-panel overlay-left">
                                 <h1 className="text-white">欢迎回来！</h1>
                                 <p>请您先填写登录的个人信息，进行操作。</p>
-                                <button className="ghost" data-type="primary" id="signIn" onClick={toggleClass}>登录</button>
+                                <button
+                                    className="ghost"
+                                    data-type="primary"
+                                    id="signIn"
+                                    onClick={() => toggleClass}
+                                >登录</button>
                             </div>
                             <div className="overlay-panel overlay-right">
                                 <h1 className="text-white">注册新账号！</h1>
                                 <p>输入您的个人信息注册账号。</p>
-                                <button className="ghost" data-type="primary" id="signUp" onClick={toggleClass}>注册</button>
+                                <button
+                                    className="ghost"
+                                    data-type="primary"
+                                    id="signUp"
+                                    onClick={() => toggleClass}
+                                >注册</button>
                             </div>
                         </div>
                     </div>

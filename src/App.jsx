@@ -28,7 +28,7 @@ function App() {
           </button>
         </p>
         <p>
-          <button onClick={getMember}>getMember</button>
+          <button onClick={() => getMember}>getMember</button>
         </p>
         <p>{member}</p>
         <p>
