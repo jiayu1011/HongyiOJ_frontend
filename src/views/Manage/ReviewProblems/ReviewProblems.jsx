@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {Button, Col, Drawer, List, message, Pagination, Row} from "antd";
 import {LoadingOutlined} from "@ant-design/icons";
-import style from './Review.module.scss'
+import style from './ReviewProblems.module.scss'
 import http from "../../../utils/http";
 import {DEFAULT_PROBLEM_LIST_PAGESIZE} from "../../../config";
 import {Link} from "react-router-dom";
 import qs from "qs";
 
-export default function Review(props){
+export default function ReviewProblems(props){
 
 
     const statusDict = {
@@ -62,14 +62,18 @@ export default function Review(props){
             console.log('题目审核:', res)
             switch (reviewStatus){
                 case 'approved':
-                    message.success('题目'+problemId+'已确认通过审核')
+                    message.success('题目'+problemId+'通过审核')
                     break
                 case 'disapproved':
-                    message.success('题目'+problemId+'已确认未通过审核')
+                    message.success('题目'+problemId+'未通过审核')
+                    break
+                case 'reviewing':
+                    message.success('题目'+problemId+'审核中')
                     break
                 default:
 
             }
+            getProblemList()
         }).catch(err => {
             message.error('通过审核失败')
         })
@@ -143,15 +147,28 @@ export default function Review(props){
                                                     <Button
                                                         type='primary'
                                                         style={{
-                                                            margin: '0 5px'
+                                                            margin: '0 2px'
                                                         }}
                                                         onClick={() => handleReview(item.problemId, 'approved')}
+                                                        disabled={item.reviewStatus==='approved'}
                                                     >通过</Button>
                                                     <Button
                                                         type='primary'
+                                                        style={{
+                                                            margin: '0 2px'
+                                                        }}
                                                         danger
                                                         onClick={() => handleReview(item.problemId, 'disapproved')}
+                                                        disabled={item.reviewStatus==='disapproved'}
                                                     >不通过</Button>
+                                                    <Button
+                                                        type='dashed'
+                                                        style={{
+                                                            margin: '0 2px'
+                                                        }}
+                                                        onClick={() => handleReview(item.problemId, 'reviewing')}
+                                                        disabled={item.reviewStatus==='reviewing'}
+                                                    >审核中</Button>
                                                 </Col>
 
                                             </Row>

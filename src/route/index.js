@@ -11,7 +11,7 @@ import ContestInfo from "../views/Index/Contests/ContestInfo/ContestInfo";
 import ProblemList from "../views/Index/Problems/ProblemList/ProblemList";
 import ContestList from "../views/Index/Contests/ContestList/ContestList";
 import Manage from "../views/Manage/Manage";
-import Review from "../views/Manage/Review/Review";
+import ReviewProblems from "../views/Manage/ReviewProblems/ReviewProblems";
 import UploadProblem from "../views/Index/UploadProblem/UploadProblem";
 import Mobile from "../components/Mobile";
 import Forget2 from "../views/Login/Forget2";
@@ -106,7 +106,7 @@ const routes = [
                     {
                         path: '/manage/reviewProblems',
                         exact: true,
-                        component: Review,
+                        component: ReviewProblems,
                     }
                 ]
             },

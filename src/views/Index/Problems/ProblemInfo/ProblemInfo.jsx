@@ -6,7 +6,7 @@ import {UPLOAD_PROBLEM_STRUCTURE, UPLOAD_PROBLEM_TEST_STRUCTURE} from "../../../
 import store from "../../../../store";
 
 function ProblemInfo(props){
-    const {route, history} = props
+    const {route, history, location} = props
     const state = store.getState()
 
 
@@ -21,9 +21,18 @@ function ProblemInfo(props){
     const [problemInfo, setProblemInfo] = useState(UPLOAD_PROBLEM_STRUCTURE);
 
 
+    function redirect(){
+        let path = location.pathname;
+        if(path.endsWith('/')){
+            history.push(path.substring(0, path.length-1))
+        }
+    }
+
+
     function getProblemInfo(){
-        let pathArr = props.location.pathname.split('/');
-        let currentId = pathArr[pathArr.length-1];
+        let pathArr = location.pathname.split('/');
+        let currentId = location.pathname.endsWith('/')? pathArr[pathArr.length-2]:pathArr[pathArr.length-1]
+        console.log(currentId)
         let params = {
             problemId: currentId
         }
@@ -60,15 +69,18 @@ function ProblemInfo(props){
 
 
     useEffect(() => {
+        redirect()
         getProblemInfo();
 
     }, [])
+
+
 
     return (
         <div>
             <Breadcrumb>
                 <Breadcrumb.Item key='problems'><a href='/problems'>题库</a></Breadcrumb.Item>
-                <Breadcrumb.Item key='problem'><a href={'/problems/'+problemInfo.problemId}>{problemInfo.problemId}</a></Breadcrumb.Item>
+                <Breadcrumb.Item key='problem'><a href={`/problems/${problemInfo.problemId}`}>{problemInfo.problemId}</a></Breadcrumb.Item>
                 <Breadcrumb.Item key='problem_info'><a href=''>题目详情</a></Breadcrumb.Item>
             </Breadcrumb>
             <div className={style.body}>

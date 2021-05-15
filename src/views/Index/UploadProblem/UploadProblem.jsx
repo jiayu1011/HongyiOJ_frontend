@@ -232,8 +232,8 @@ export default function UploadProblem(props){
                     {...layout}
                     name='uploadProblem'
                     initialValues={{remember: true}}
-                    onFinish={handleFormFinished}
-                    onFinishFailed={handleFormFinishedFailed}
+                    onFinish={(values) => handleFormFinished(values)}
+                    onFinishFailed={() => handleFormFinishedFailed()}
                 >
                     <Form.Item
                         label='题目名称'
