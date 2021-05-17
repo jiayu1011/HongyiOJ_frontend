@@ -6,6 +6,7 @@ import http from "../../../utils/http";
 import {DEFAULT_PROBLEM_LIST_PAGESIZE} from "../../../config";
 import {Link} from "react-router-dom";
 import qs from "qs";
+import {APIS} from "../../../config/apis";
 
 export default function ReviewProblems(props){
 
@@ -32,7 +33,7 @@ export default function ReviewProblems(props){
         }
 
 
-        http.get('/problem/list', {
+        http.get(APIS.PROBLEM.GET_PROBLEM_LIST, {
             params: params
         }).then(res => {
             console.log('所有题目列表:', res)
@@ -53,26 +54,30 @@ export default function ReviewProblems(props){
             problemId: problemId,
             reviewStatus: reviewStatus
         }
-        let headers = {
-            Authorization: sessionStorage.getItem('token')
-        }
-        http.put('/review', qs.stringify(data), {
-            headers: headers
+        http.put(APIS.MANAGE.REVIEW_PROBLEM, qs.stringify(data), {
+            headers: {
+                Authorization: sessionStorage.getItem('token')
+            }
         }).then(res => {
             console.log('题目审核:', res)
-            switch (reviewStatus){
-                case 'approved':
-                    message.success('题目'+problemId+'通过审核')
-                    break
-                case 'disapproved':
-                    message.success('题目'+problemId+'未通过审核')
-                    break
-                case 'reviewing':
-                    message.success('题目'+problemId+'审核中')
-                    break
-                default:
+            if(res.data.isOk){
+                switch (reviewStatus){
+                    case 'approved':
+                        message.success('题目'+problemId+'通过审核')
+                        break
+                    case 'disapproved':
+                        message.success('题目'+problemId+'未通过审核')
+                        break
+                    case 'reviewing':
+                        message.success('题目'+problemId+'审核中')
+                        break
+                    default:
 
+                }
+            } else {
+                message.error(res.data.errMsg)
             }
+
             getProblemList()
         }).catch(err => {
             message.error('通过审核失败')

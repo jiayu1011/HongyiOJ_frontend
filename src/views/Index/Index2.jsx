@@ -144,9 +144,9 @@ function Index2(props){
 
         }
 
-        setSelectedKeys(sk);
+        setSelectedKeys([sk]);
 
-    }, [props.location.pathname]);
+    }, [location.pathname]);
 
 
     //用户下拉选项单
@@ -236,7 +236,11 @@ function Index2(props){
                 {sideMenu}
             </Sider>
             <Layout className="site-layout">
-                <Header className="site-layout-background" style={{ padding: 0 }}>
+                <Header
+                    className="site-layout-background"
+                    style={{
+                        padding: 0
+                }}>
                     <div className='user'>
                         <div className="info mr-20">
                             <Avatar src={userInfo.avatarUrl} />
@@ -253,7 +257,7 @@ function Index2(props){
                 <Modal
                     title='提示'
                     visible={isModalVisible}
-                    onOk={() => logout}
+                    onOk={() => logout()}
                     onCancel={() => {
                         message.info('登出已取消!');
                         setIsModalVisible(false);

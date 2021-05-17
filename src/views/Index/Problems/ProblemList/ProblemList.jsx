@@ -6,6 +6,7 @@ import {LoadingOutlined, SearchOutlined} from "@ant-design/icons";
 import http from "../../../../utils/http";
 import {DEFAULT_PROBLEM_LIST_PAGESIZE} from '../../../../config'
 import store from "../../../../store";
+import {APIS} from "../../../../config/apis";
 
 
 export default function ProblemList(props){
@@ -50,7 +51,7 @@ export default function ProblemList(props){
             headers.Authorization = sessionStorage.getItem('token');
         }
 
-        http.get('/problem/list', {
+        http.get(APIS.PROBLEM.GET_PROBLEM_LIST, {
             params: params,
             headers: headers
         }).then(res => {
@@ -75,7 +76,7 @@ export default function ProblemList(props){
         } else {
             params.problemName = searchInput;
         }
-        http.get('/problem/list',{
+        http.get(APIS.PROBLEM.GET_PROBLEM_LIST,{
             params: params,
         }).then(res => {
             console.log('problemList:', res);

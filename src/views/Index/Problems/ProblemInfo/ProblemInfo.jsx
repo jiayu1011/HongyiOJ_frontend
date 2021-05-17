@@ -4,6 +4,7 @@ import http from "../../../../utils/http";
 import style from './ProblemInfo.module.scss'
 import {UPLOAD_PROBLEM_STRUCTURE, UPLOAD_PROBLEM_TEST_STRUCTURE} from "../../../../config";
 import store from "../../../../store";
+import {APIS} from "../../../../config/apis";
 
 function ProblemInfo(props){
     const {route, history, location} = props
@@ -40,7 +41,7 @@ function ProblemInfo(props){
         if(state.logged){
             headers.Authorization = sessionStorage.getItem('token')
         }
-        http.get('/problem/list', {
+        http.get(APIS.PROBLEM.GET_PROBLEM_LIST, {
             params: params,
             headers: headers
         }).then(res => {

@@ -15,7 +15,6 @@ function Discussions(props){
 
     useEffect(() => {
         redirectToList();
-        console.log(route)
     }, [location.pathname])
 
     return (

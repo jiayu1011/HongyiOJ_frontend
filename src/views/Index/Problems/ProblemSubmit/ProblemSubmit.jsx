@@ -35,7 +35,7 @@ function ProblemSubmit(props){
             username: state.userInfo.username,
             problemId: problemInfo.problemId
         }
-        http.post('/submit', utils.makeFormData(data), {
+        http.post('/submit/code', utils.makeFormData(data), {
             headers: {
                 Authorization: sessionStorage.getItem('token')
             }
