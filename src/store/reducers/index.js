@@ -7,7 +7,8 @@ import {
 
 const defaultState = {
     userInfo: {
-        avatarUrl: 'https://th.bing.com/th/id/OIP.WfMx-_qguVTIb7zoVdf9egAAAA?pid=ImgDet&rs=1',
+        // avatarUrl: 'https://th.bing.com/th/id/OIP.WfMx-_qguVTIb7zoVdf9egAAAA?pid=ImgDet&rs=1',
+        avatarUrl: 'http://119.29.24.77:8000/sources/HongyiOJ/image/hongyi_logo.png',
         username: '',
         password: '',
         email: '',

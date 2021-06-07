@@ -32,8 +32,8 @@ function ProblemSubmit(props){
         setCodeSubmitForm(values)
         let data = {
             ...values,
-            username: state.userInfo.username,
-            problemId: problemInfo.problemId
+            author: state.userInfo.username,
+            relatedProblemId: problemInfo.problemId
         }
         http.post('/submit/code', utils.makeFormData(data), {
             headers: {
@@ -43,7 +43,7 @@ function ProblemSubmit(props){
             console.log('提交代码:', res)
             if(res.data.isOk){
                 message.success('代码提交成功')
-
+                history.push('/evaluationList')
             } else {
                 message.error(res.data.errMsg)
             }
@@ -105,7 +105,11 @@ function ProblemSubmit(props){
                                     >
                                         <b style={{
                                             color: 'red'
-                                        }}>*目前仅支持C, C++, Python3, Java</b>
+                                        }}>* 目前仅支持C, C++, Python3, Java</b>
+                                        <br/>
+                                        <b style={{
+                                            color: 'red'
+                                        }}>* 提交代码模式为ACM模式，即需要提交完整的、可以处理输入输出的程序</b>
                                         <Form.Item
                                             label=''
                                             name='codeLanguage'

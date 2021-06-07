@@ -1,36 +1,36 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-
-import { message } from 'antd'
+import React, {useState} from "react";
+import {Input, message} from "antd";
+import http from "../../utils/http";
+import utils from "../../utils/utils";
+import {Link} from "react-router-dom";
 import './Login.scss'
+import qs from 'qs'
 
-const { $http } = React
-const PhoneRegexp = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/
+function Forget(props){
+    const {history} = props
 
-class Forget extends React.Component {
-    constructor(){
-        super()
-        this.state = {
-            validateForm: {
-                phone: '',
-                imgCode: '',
-                code: ''
-            },
-            form: {
-                password: '',
-                repeatPassword: ''
-            },
-            formType: 'validate',
-            codeText: '获取验证码',
-            disabled: false
-        }
-    }
+    const emailRegExp = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/
+    const autoComplete = 'off'
 
-    handleNext = (event) => {
+    const [validateForm, setValidateForm] = useState({
+        email: '',
+        imgCode: '',
+        code: ''
+    })
+    const [form, setForm] = useState({
+        password: '',
+        repeatPassword: ''
+    })
+    const [formType, setFormType] = useState('validate')
+    const [codeText, setCodeText] = useState('获取验证码')
+    const [disabled, setDisabled] = useState(false)
+
+    
+    
+    function handleNext(event){
         event.preventDefault()
-        const { validateForm } = this.state
-        if (!validateForm.phone) {
-            return message.error('请输入手机号码')
+        if (!validateForm.email) {
+            return message.error('请输入邮箱')
         }
         if (!validateForm.imgCode) {
             return message.error('请输入图形验证码')
@@ -38,128 +38,195 @@ class Forget extends React.Component {
         if (!validateForm.code) {
             return message.error('请输入验证码')
         }
-        this.setState({
-            formType: 'password',
-            validateForm: {
-                ...validateForm,
-                code: ''
+
+        let data = {}
+        data.verifyCode = validateForm.code
+        data.email = validateForm.email
+        http.post('/verify', utils.makeFormData(data)).then(res => {
+            console.log('验证验证码:', res)
+            if(res.data.isOk){
+                setFormType('password')
+            } else {
+                message.error(res.data.errMsg)
             }
+        }).catch(err => {
+            console.log(err)
+            message.error('验证失败')
         })
+
+
+   
     }
-    handlePrev = (event) => {
+    
+    function handlePrev(event){
         event.preventDefault()
-        this.setState({
-            formType: 'validate',
-            form: {
-                password: '',
-                repeatPassword: ''
-            }
+        setFormType('validate')
+        setForm({
+            password: '',
+            repeatPassword: ''
         })
+
     }
-    handleValidate = (e) => {
-        const value = e.target.value
-        if (value && !PhoneRegexp.test(value)) {
-            message.error('手机号码格式不正确')
+    
+    function handleValidate(e){
+        const {value} = e.target
+        if(value && !emailRegExp.test(value)){
+            message.error('邮箱格式不正确')
         }
     }
-    handleInputChange = (event, formType, name) => {
-        const { validateForm, form } = this.state
-        const value = event.target.value
-        if (formType === 'validate') {
-            validateForm[name] = value
-            this.setState({ validateForm })
+    
+    function handleInputChange(event, formType, name){
+        const {value} = event.target
+        if(formType === 'validate'){
+            let tempForm = validateForm
+            tempForm[name] = value
+            setValidateForm(tempForm)
         } else {
-            form[name] = value
-            this.setState({ form })
+            let tempForm = form
+            tempForm[name] = value
+            setForm(tempForm)
         }
     }
-    // 验证码已发送到手机，请注意查收
-    handleGetCode = () => {
-        if (!this.state.validateForm.phone || !PhoneRegexp.test(this.state.validateForm.phone)) {
-            return message.error('请输入正确手机号码')
+    
+    function handleGetCode(){
+        if(!validateForm.email || !emailRegExp.test(validateForm.email)){
+            return message.error('请输入正确的邮箱')
         }
+        
         let s = 59
         let timer = null
-        message.success('验证码已发送到手机，请注意查收')
-        this.setState({
-            disabled: true,
-            codeText: `${s}秒后重新获取`
-        }, () => {
+        http.get('/verify/code', {
+            params: {
+                email: validateForm.email
+            }
+        }).then(res => {
+            console.log('发送验证码:', res)
+            message.success('验证码已发送到邮箱，请注意查收')
+            setDisabled(true)
+            setCodeText(`${s}秒后获取`)
             timer = setInterval(() => {
                 s -= 1
-                this.setState({
-                    codeText: `${s}秒后重新获取`
-                })
-                if (s === 0) {
+                setCodeText(`${s}秒后获取`)
+
+                if(s === 0){
                     clearInterval(timer)
-                    this.setState({
-                        codeText: '获取验证码',
-                        disabled: false
-                    })
+                    setDisabled(false)
+                    setCodeText('获取验证码')
                 }
             }, 1000)
-        })
-        // 获取验证码
-        $http.get('send/code', { params: {phone: this.state.validateForm.phone}}).then(res => {
-            clearInterval(timer)
-            this.setState({
-                validateForm: {...this.state.validateForm, code: res.code},
-                codeText: '获取验证码',
-                disabled: false
-            })
-        })
-    }
-    handleResetPassword = (event) => {
-        event.preventDefault()
-        const { form } = this.state
-        if (!form.password) {
-            return message.error('请输入密码')
-        }
-        if (!form.repeatPassword) {
-            return message.error('请输入确认密码')
-        }
-        $http.post('reset/password', {form}).then(() => {
-            message.success('密码重置成功，请到重新登录账号')
-            setTimeout(() => {
-                this.props.history.replace('/login')
-            }, 1500)
+        }).catch(err => {
+            console.log(err)
+            message.error('发送验证码失败')
         })
     }
 
-    render() {
-        const { formType, validateForm, codeText, disabled, form } = this.state
-        return (
+    function handleResetPassword(event){
+        event.preventDefault()
+        if(!form.password){
+            return message.error('请输入密码')
+        }
+        if(!form.repeatPassword){
+            return message.error('请输入确认密码')
+        }
+        if(form.password !== form.repeatPassword){
+            return message.error('两次输入密码不一致')
+        }
+        let data = {}
+        data.email = validateForm.email
+        data.password = form.password
+
+        http.put('/reset/password', qs.stringify(data), {
+
+        }).then(res => {
+            console.log('重置密码:', res)
+            if(res.data.isOk){
+                message.success('密码重置成功，请重新登录账号，3秒后自动跳转至登录页面')
+                setTimeout(() => {
+                    history.push('/login')
+
+                }, 3000)
+            } else {
+                message.error(res.data.errMsg)
+            }
+        })
+    }
+    
+    return (
+        <div>
             <div className="login-wrapper forget">
                 <div className={`container ${formType === 'password' ? 'right-panel-active' : ''}`} id="container">
                     <div className="form-container validate-container">
-                        <form id="validate" onSubmit={this.handleNext}>
+                        <form id="validate" onSubmit={handleNext}>
                             <h1>忘记密码</h1>
-                            <input type="text" value={validateForm.phone} onBlur={this.handleValidate} onChange={(event) => this.handleInputChange(event, 'validate', 'phone')} name="phone" placeholder="请输入手机号码" />
+                            <input
+                                type="text"
+                                autoComplete={autoComplete}
+                                onBlur={handleValidate}
+                                onChange={(event) => handleInputChange(event, 'validate', 'email')}
+                                name="email"
+                                placeholder="请输入邮箱"
+                            />
                             <div className="d-flex w-100">
-                                <input type="text" value={validateForm.imgCode} onChange={(event) => this.handleInputChange(event, 'validate', 'imgCode')} name="imgCode" placeholder="图形验证码" />
+                                <input
+                                    type="text"
+                                    autoComplete={autoComplete}
+                                    onChange={(event) => handleInputChange(event, 'validate', 'imgCode')}
+                                    name="imgCode"
+                                    placeholder="图形验证码"
+                                />
                                 <img src="https://www.oschina.net/action/user/captcha" alt="code" className="img-code" />
                             </div>
                             <div className="d-flex w-100">
-                                <input type="text" value={validateForm.code} onChange={(event) => this.handleInputChange(event, 'validate', 'code')} name="code" placeholder="短信验证码" />
-                                <button type="button" className={`code ${disabled ? 'code-disabled' : ''}`} disabled={disabled} onClick={this.handleGetCode}>{codeText}</button>
+                                <input
+                                    type="text"
+                                    autoComplete={autoComplete}
+                                    onChange={(event) => handleInputChange(event, 'validate', 'code')}
+                                    name="code"
+                                    placeholder="邮箱验证码"
+                                />
+                                <button
+                                    type="button"
+                                    className={`code ${disabled ? 'code-disabled' : ''}`}
+                                    disabled={disabled}
+                                    onClick={() => handleGetCode}
+                                >{codeText}</button>
                             </div>
-                            <button type="submit" data-type="primary" className="mt-20">找回密码</button>
+                            <button
+                                type="submit"
+                                className="mt-20"
+                                onClick={() => handleNext}
+                            >找回密码</button>
                             <Link to="/login">已有账号，去登录</Link>
                         </form>
                     </div>
                     <div className="form-container password-container">
-                        <form id="password" onSubmit={this.handleResetPassword}>
+                        <form id="password" onSubmit={handleResetPassword}>
                             <h1>设置密码</h1>
-                            <input type="password" value={form.password} onChange={(event) => this.handleInputChange(event, 'form', 'password')} name="phone" placeholder="请输入密码" />
-                            <input type="password" value={form.repeatPassword} onChange={(event) => this.handleInputChange(event, 'from', 'repeatPassword')} name="code" placeholder="请确认密码" />
-                            <button type="submit" data-type="primary" className="mt-20">重置新密码</button>
-                            <button type="submit" className="mt-20" onClick={this.handlePrev}>上一步</button>
+                            <input
+                                type="password"
+                                onChange={(event) => handleInputChange(event, 'form', 'password')}
+                                placeholder="请输入密码"
+                            />
+                            <input
+                                type="password"
+                                onChange={(event) => handleInputChange(event, 'from', 'repeatPassword')}
+                                placeholder="请确认密码"
+                            />
+                            <button
+                                type="submit"
+                                className="mt-20"
+                            >重置新密码</button>
+                            <button
+                                type="submit"
+                                className="mt-20"
+                                onClick={() => handlePrev}
+                            >上一步</button>
                         </form>
                     </div>
                 </div>
             </div>
-        )
-    }
+        </div>
+    )
 }
 
 export default Forget

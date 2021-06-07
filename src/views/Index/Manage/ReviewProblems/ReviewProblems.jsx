@@ -2,11 +2,11 @@ import React, {useEffect, useState} from "react";
 import {Button, Col, Drawer, List, message, Pagination, Row} from "antd";
 import {LoadingOutlined} from "@ant-design/icons";
 import style from './ReviewProblems.module.scss'
-import http from "../../../utils/http";
-import {DEFAULT_PROBLEM_LIST_PAGESIZE} from "../../../config";
+import http from "../../../../utils/http";
+import {DEFAULT_PROBLEM_LIST_PAGESIZE} from "../../../../config";
 import {Link} from "react-router-dom";
 import qs from "qs";
-import {APIS} from "../../../config/apis";
+import {APIS} from "../../../../config/apis";
 
 export default function ReviewProblems(props){
 

@@ -34,9 +34,9 @@ export default function ProblemList(props){
 
         }
     ]);
-    const [searchInput, setSearchInput] = useState('');
-    const [resultSum, setResultSum] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [searchInput, setSearchInput] = useState('')
+    const [resultSum, setResultSum] = useState(0)
+    const [currentPage, setCurrentPage] = useState(1)
 
     function getProblemList(){
         setLoading(true);
