@@ -164,17 +164,54 @@ function Login (props){
                     <div className="form-container sign-up-container">
                         <form id="register" onSubmit={handleRegister}>
                             <h1>注册</h1>
-                            <input type="text" autoComplete={autoComplete} name="username" onChange={(event) => handleInputChange(event, 'register', 'username')} placeholder="用户名" />
-                            <input type="email" autoComplete={autoComplete} name="email" onChange={(event) => handleInputChange(event, 'register', 'email')} placeholder="邮箱" />
-                            <input type="password" name="password" onChange={(event) => handleInputChange(event, 'register', 'password')} placeholder="密码" />
+                            <input
+                                type="text"
+                                autoComplete={autoComplete}
+                                name="username"
+                                onChange={(event) => {
+                                    handleInputChange(event, 'register', 'username')
+                                }}
+                                placeholder="用户名"
+                            />
+                            <input
+                                type="email"
+                                autoComplete={autoComplete}
+                                name="email"
+                                onChange={(event) => {
+                                    handleInputChange(event, 'register', 'email')
+                                }}
+                                placeholder="邮箱"
+                            />
+                            <input
+                                type="password"
+                                name="password"
+                                onChange={(event) => {
+                                    handleInputChange(event, 'register', 'password')
+                                }}
+                                placeholder="密码"
+                            />
                             <button type="submit" data-type="primary">注册</button>
                         </form>
                     </div>
                     <div className="form-container sign-in-container">
                         <form id="login" method='POST' onSubmit={handleLogin}>
                             <h1>登录</h1>
-                            <input type="text" autoComplete={autoComplete} onChange={(event) => handleInputChange(event, 'login', 'username')} name="username" placeholder="用户名" />
-                            <input type="password" onChange={(event) => handleInputChange(event, 'login', 'password')} name="password" placeholder="密码" />
+                            <input
+                                type="text"
+                                autoComplete={autoComplete}
+                                onChange={(event) => {
+                                    handleInputChange(event, 'login', 'username')
+                                }}
+                                name="username"
+                                placeholder="用户名" />
+                            <input
+                                type="password"
+                                onChange={(event) => {
+                                handleInputChange(event, 'login', 'password')
+                            }}
+                                name="password"
+                                placeholder="密码"
+                            />
                             <Link to="/forget">忘记密码</Link>
                             <button type='submit' data-type="primary" disabled={loading}>
                                 {loading ? <LoadingOutlined className="mr-5" /> : null}登录
@@ -190,7 +227,9 @@ function Login (props){
                                     className="ghost"
                                     data-type="primary"
                                     id="signIn"
-                                    onClick={() => toggleClass}
+                                    onClick={() => {
+                                        toggleClass()
+                                    }}
                                 >登录</button>
                             </div>
                             <div className="overlay-panel overlay-right">
@@ -200,7 +239,9 @@ function Login (props){
                                     className="ghost"
                                     data-type="primary"
                                     id="signUp"
-                                    onClick={() => toggleClass}
+                                    onClick={() => {
+                                        toggleClass()
+                                    }}
                                 >注册</button>
                             </div>
                         </div>
