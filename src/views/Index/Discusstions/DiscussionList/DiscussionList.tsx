@@ -2,8 +2,9 @@ import React, {useEffect} from "react";
 import {Breadcrumb, message} from "antd";
 import http from "../../../../utils/http";
 import {APIS} from "../../../../config/apis";
+import {IProps} from "../../../../config/interfaces";
 
-function DiscussionList(props){
+export const DiscussionList:React.FC<IProps> = (props) => {
 
     function getDiscussionList(){
         http.get(APIS.DISCUSSION.GET_DISCUSSION_LIST, {
@@ -34,5 +35,3 @@ function DiscussionList(props){
         </div>
     )
 }
-
-export default DiscussionList

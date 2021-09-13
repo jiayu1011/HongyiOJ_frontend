@@ -5,9 +5,10 @@ import {UPLOAD_PROBLEM_STRUCTURE, LENGTH_LIMIT} from "../../../../config";
 import http from "../../../../utils/http";
 import style from './ProblemSubmit.module.scss'
 import {MailOutlined} from "@ant-design/icons";
-import utils from "../../../../utils/utils";
+import {makeFormData} from "../../../../utils/utils";
+import {IProps} from "../../../../config/interfaces";
 
-function ProblemSubmit(props){
+export const ProblemSubmit:React.FC<IProps> = (props) => {
     const {route, history, location} = props
     const state = store.getState()
 
@@ -19,7 +20,7 @@ function ProblemSubmit(props){
     })
 
 
-    function getProblemInfo(){
+    const getProblemInfo = () => {
         let pathArr = location.pathname.split('/');
         let currentId = location.pathname.endsWith('/')? pathArr[pathArr.length-3]:pathArr[pathArr.length-2]
         setProblemInfo({
@@ -28,27 +29,27 @@ function ProblemSubmit(props){
         })
     }
 
-    function handleCodeSubmitFormFinished(values){
+    const handleCodeSubmitFormFinished = (values:any) => {
         setCodeSubmitForm(values)
         let data = {
             ...values,
             author: state.userInfo.username,
             relatedProblemId: problemInfo.problemId
         }
-        http.post('/submit/code', utils.makeFormData(data), {
+        http.post('/submit/code', makeFormData(data), {
             headers: {
                 Authorization: sessionStorage.getItem('token')
             }
         }).then(res => {
             console.log('提交代码:', res)
             if(res.data.isOk){
-                message.success('代码提交成功')
+                message.success('代码提交成功').then()
                 history.push('/evaluationList')
             } else {
-                message.error(res.data.errMsg)
+                message.error(res.data.errMsg).then()
             }
         }).catch(err => {
-            message.error('提交代码失败')
+            message.error('提交代码失败').then()
         })
 
 
@@ -61,9 +62,9 @@ function ProblemSubmit(props){
 
 
     return (
-        <div>
+        <>
             <Breadcrumb>
-                <Breadcrumb.Item key='problems'><a href='/problems'>题库</a></Breadcrumb.Item>
+                <Breadcrumb.Item key='problems'><a href={'/problems'}>题库</a></Breadcrumb.Item>
                 <Breadcrumb.Item key='problem'><a href={`/problems/${problemInfo.problemId}`}>{problemInfo.problemId}</a></Breadcrumb.Item>
                 <Breadcrumb.Item key='problem_submit'><a href=''>提交答案</a></Breadcrumb.Item>
             </Breadcrumb>
@@ -159,8 +160,7 @@ function ProblemSubmit(props){
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 
-export default ProblemSubmit

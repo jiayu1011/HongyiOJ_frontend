@@ -5,8 +5,9 @@ import style from './ProblemInfo.module.scss'
 import {UPLOAD_PROBLEM_STRUCTURE, UPLOAD_PROBLEM_TEST_STRUCTURE} from "../../../../config";
 import store from "../../../../store";
 import {APIS} from "../../../../config/apis";
+import {HTTPHeaders, IProps} from "../../../../config/interfaces";
 
-function ProblemInfo(props){
+export const ProblemInfo:React.FC<IProps> = (props) => {
     const {route, history, location} = props
     const state = store.getState()
 
@@ -22,7 +23,7 @@ function ProblemInfo(props){
     const [problemInfo, setProblemInfo] = useState(UPLOAD_PROBLEM_STRUCTURE);
 
 
-    function redirect(){
+    const redirect = () => {
         let path = location.pathname;
         if(path.endsWith('/')){
             history.push(path.substring(0, path.length-1))
@@ -30,14 +31,14 @@ function ProblemInfo(props){
     }
 
 
-    function getProblemInfo(){
+    const getProblemInfo = () => {
         let pathArr = location.pathname.split('/');
         let currentId = location.pathname.endsWith('/')? pathArr[pathArr.length-2]:pathArr[pathArr.length-1]
         console.log(currentId)
         let params = {
             problemId: currentId
         }
-        let headers = {}
+        let headers:HTTPHeaders = {}
         if(state.logged){
             headers.Authorization = sessionStorage.getItem('token')
         }
@@ -49,18 +50,18 @@ function ProblemInfo(props){
             if(res.data.isOk){
                 setProblemInfo(res.data.problemList[0]);
             } else {
-                message.error(res.data.errMsg)
+                message.error(res.data.errMsg).then()
             }
 
 
         }).catch(err => {
-            message.error('获取题目详情失败')
+            message.error('获取题目详情失败').then()
         })
     }
 
-    function formatContent(str){
+    const formatContent = (str:string) => {
         let urlPattern = /(https?:\/\/|www\.)[a-zA-Z_0-9\-@]+(\.\w[a-zA-Z_0-9\-:]+)+(\/[\(\)~#&\-=?\+\%/\.\w]+)?/g
-        str = str.replace(urlPattern, function (match){
+        str = str.replace(urlPattern, (match) => {
             // console.log(match)
             return `<br/><img src="${match}" alt="${match}" height="" width=""/><br/>`
         })
@@ -78,9 +79,9 @@ function ProblemInfo(props){
 
 
     return (
-        <div>
+        <>
             <Breadcrumb>
-                <Breadcrumb.Item key='problems'><a href='/problems'>题库</a></Breadcrumb.Item>
+                <Breadcrumb.Item key='problems'><a href={'/problems'}>题库</a></Breadcrumb.Item>
                 <Breadcrumb.Item key='problem'><a href={`/problems/${problemInfo.problemId}`}>{problemInfo.problemId}</a></Breadcrumb.Item>
                 <Breadcrumb.Item key='problem_info'><a href=''>题目详情</a></Breadcrumb.Item>
             </Breadcrumb>
@@ -112,7 +113,7 @@ function ProblemInfo(props){
                         <div className='unit-title'>题目描述</div>
                         <div
                             dangerouslySetInnerHTML={{__html: formatContent(problemInfo.problemDes)}}
-                        ></div>
+                        />
                     </div>
                     <div className='problem-unit'>
                         <div className='unit-title'>输入格式</div>
@@ -130,9 +131,8 @@ function ProblemInfo(props){
 
                 </div>
             </div>
-        </div>
+        </>
 
     )
 }
 
-export default ProblemInfo

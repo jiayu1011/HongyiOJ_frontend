@@ -1,7 +1,8 @@
 import React, {useEffect} from "react";
 import {renderRoutes} from "react-router-config";
+import {IProps} from "../../../config/interfaces";
 
-export default function Manage(props){
+export const Manage:React.FC<IProps> = (props) => {
     const {route} = props;
 
     useEffect(() => {
@@ -9,9 +10,9 @@ export default function Manage(props){
     }, [])
 
     return (
-        <div>
+        <>
             <div>后台管理</div>
             <div>{renderRoutes(route.routes)}</div>
-        </div>
+        </>
     )
 }

@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from "react";
+import {IProps} from "../config/interfaces";
 
-function NotFound (props){
 
-    const history = props.history;
+export const NotFound:React.FC<IProps> = (props) => {
+    const {history} = props;
 
     const [count, setCount] = useState(3);
 
@@ -25,4 +26,3 @@ function NotFound (props){
     )
 }
 
-export default NotFound

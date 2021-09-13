@@ -1,7 +1,12 @@
 import React, {useState, useEffect} from "react";
 import {Breadcrumb} from "antd";
+import {IProps} from "../config/interfaces";
 
-function MyBreadCrumb(props){
+interface IPropsNew extends IProps{
+    myProps?: any
+}
+
+export const MyBreadCrumb:React.FC<IPropsNew> = (props) => {
     const {myProps, history} = props;
 
     const englishMenuArr = [
@@ -15,7 +20,7 @@ function MyBreadCrumb(props){
 
     useEffect(() => {
         let pathArr = myProps.location.pathname.split('/');
-        setBreadcrumb(pathArr.map((item) => chineseMenuArr[englishMenuArr.indexOf(item)]));
+        setBreadcrumb(pathArr.map((item:any) => chineseMenuArr[englishMenuArr.indexOf(item)]));
         // console.log([pathArr[1]]);
 
     }, [myProps]);

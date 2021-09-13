@@ -1,55 +1,48 @@
-import {Layout, Menu, Breadcrumb, Dropdown, Button, message, Modal} from 'antd';
+import {Layout, Menu, Dropdown, Button, message, Modal} from 'antd';
 import {
     DesktopOutlined,
     PieChartOutlined,
     FileOutlined,
-    TeamOutlined,
-    UserOutlined, DownOutlined,
+    UserOutlined,
+    DownOutlined,
 } from '@ant-design/icons';
 
 import React, {useState, useEffect} from "react";
 import './Index.scss'
 import {renderRoutes} from "react-router-config";
-
+import {IProps, UserInfo} from "../../config/interfaces";
 import Avatar from "antd/es/avatar/avatar";
 import http from "../../utils/http";
-import utils from "../../utils/utils";
-import moment from 'moment';
-import MyFooter from "../../components/MyFooter";
-import MyBreadCrumb from "../../components/MyBreadCrumb";
+import {MyFooter} from "../../components/MyFooter";
 import store from "../../store";
 import qs from 'qs'
+import { MenuInfo } from 'rc-menu/lib/interface';
 
-const { Header, Content, Footer, Sider } = Layout;
-const { SubMenu } = Menu;
+const {Header, Content, Footer, Sider} = Layout;
+const {SubMenu} = Menu;
 
 
-
-function Index(props){
-
+export const Index: React.FC<IProps> = (props) => {
     const {location, history, route} = props
     const state = store.getState();
 
 
-
     const [collapsed, setCollapsed] = useState(false);
     const [selectedKeys, setSelectedKeys] = useState(['']);
-    const [userInfo, setUserInfo] = useState({
-        // avatarUrl: 'https://sf1-ttcdn-tos.pstatp.com/img/user-avatar/f4998fe95ef30363f12a04f670579825~300x300.image',
-        avatarUrl: 'http://119.29.24.77:8000/sources/HongyiOJ/image/hongyi_logo.png',
+    const [userInfo, setUserInfo] = useState<UserInfo>({
         username: '未登录',
+        avatarUrl: 'http://119.29.24.77:8000/sources/HongyiOJ/image/hongyi_logo.png',
+        // avatarUrl: 'https://sf1-ttcdn-tos.pstatp.com/img/user-avatar/f4998fe95ef30363f12a04f670579825~300x300.image',
 
     });
     const [isModalVisible, setIsModalVisible] = useState(false);
 
 
-    function logout(){
+    const logout = () => {
         let data = {
             username: state.userInfo.username
         }
-        http.put('/logout', qs.stringify(data), {
-
-        }).then(res => {
+        http.put('/logout', qs.stringify(data), {}).then(res => {
             console.log('登出:', res);
         }).catch(err => {
             console.log(err)
@@ -60,12 +53,12 @@ function Index(props){
         history.push('/login');
     }
 
-    function onCollapse(collapsed){
+    const onCollapse = (collapsed: boolean | ((prevState: boolean) => boolean)) => {
         console.log(collapsed);
         setCollapsed(collapsed);
     }
 
-    function handleMenuClick(item){
+    function handleMenuClick(item: MenuInfo){
         console.log(item)
         if (item.key === 'logout') {
             setIsModalVisible(true);
@@ -74,7 +67,7 @@ function Index(props){
         }
     }
 
-    function handleRouter(item){
+    function handleRouter(item: MenuInfo){
         // console.log(item);
         history.push('/' + item.key);
     }
@@ -90,8 +83,8 @@ function Index(props){
 
     //初始化信息
     useEffect(() => {
-        if(state.logged){
-            setUserInfo(JSON.parse(sessionStorage.getItem('userInfo')));
+        if(state.logged && sessionStorage.getItem('userInfo')){
+            setUserInfo(JSON.parse(sessionStorage.getItem('userInfo') as string));
         }
 
         redirectToHome();
@@ -216,55 +209,59 @@ function Index(props){
 
 
 
+    // @ts-ignore
     return (
-        <Layout style={{ minHeight: '100vh' }}>
-            <Sider className="sider"  collapsed={collapsed} onCollapse={onCollapse}>
-                <div className="logo" onClick={() => history.push('/home')}>Hongyi OJ</div>
-                {sideMenu}
-            </Sider>
-            <Layout className="site-layout">
-                <Header
-                    className="site-layout-background"
-                    style={{
-                        padding: 0
-                }}>
-                    <div className='user'>
-                        <div className="info mr-20">
-                            <Avatar src={userInfo.avatarUrl} />
-                            <Dropdown overlay={userDropdownMenu}
-                                      trigger="['click']"
-                                      getPopupContainer={() => document.getElementsByClassName('info')[0]}>
-                                <Button type="link">
-                                    {userInfo.username}<DownOutlined />
-                                </Button>
-                            </Dropdown>
+        <>
+            <Layout style={{ minHeight: '100vh' }}>
+                <Sider className="sider"  collapsed={collapsed} onCollapse={onCollapse}>
+                    <div className="logo" onClick={() => history.push('/home')}>Hongyi OJ</div>
+                    {sideMenu}
+                </Sider>
+                <Layout className="site-layout">
+                    <Header
+                        className="site-layout-background"
+                        style={{
+                            padding: 0
+                    }}>
+                        <div className='user'>
+                            <div className="info mr-20">
+                                <Avatar src={userInfo.avatarUrl} />
+                                <Dropdown overlay={userDropdownMenu}
+                                          trigger={['click']}
+                                          //@ts-ignore
+                                          getPopupContainer={() => document.getElementsByClassName('info')[0]}>
+                                    <Button type="link">
+                                        {userInfo.username}<DownOutlined />
+                                    </Button>
+                                </Dropdown>
+                            </div>
                         </div>
-                    </div>
-                </Header>
-                <Modal
-                    title='提示'
-                    visible={isModalVisible}
-                    onOk={() => logout()}
-                    onCancel={() => {
-                        message.info('登出已取消!');
-                        setIsModalVisible(false);
-                    }}
-                >
-                    <div>确认要登出吗?</div>
-                </Modal>
-                <Content>
-                    <div className='content'>
-                        {/*<MyBreadCrumb myProps={props}></MyBreadCrumb>*/}
-                        <div>
-                            {renderRoutes(route.routes)}
+                    </Header>
+                    <Modal
+                        title='提示'
+                        visible={isModalVisible}
+                        onOk={logout}
+                        onCancel={() => {
+                            message.info('登出已取消!');
+                            setIsModalVisible(false);
+                        }}
+                    >
+                        <div>确认要登出吗?</div>
+                    </Modal>
+                    <Content>
+                        <div className='content'>
+                            {/*<MyBreadCrumb myProps={props}></MyBreadCrumb>*/}
+                            <div>
+                                {renderRoutes(route.routes)}
+                            </div>
                         </div>
-                    </div>
 
 
-                </Content>
-                <Footer><MyFooter></MyFooter></Footer>
+                    </Content>
+                    <Footer><MyFooter></MyFooter></Footer>
+                </Layout>
             </Layout>
-        </Layout>
+        </>
     )
 }
 

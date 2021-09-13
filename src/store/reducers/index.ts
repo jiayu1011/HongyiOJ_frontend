@@ -1,4 +1,3 @@
-import { combineReducers } from "redux";
 import {
     SET_USERINFO,
     SET_LOGGED,
@@ -19,7 +18,7 @@ const defaultState = {
     logged: false,
 }
 
-const userInfo = sessionStorage.getItem('userInfo')? JSON.parse(sessionStorage.getItem('userInfo')):defaultState.userInfo
+const userInfo = sessionStorage.getItem('userInfo')? JSON.parse(sessionStorage.getItem('userInfo') as string):defaultState.userInfo
 const logged = !!sessionStorage.getItem('userInfo')
 
 export const initialState = {
@@ -30,7 +29,7 @@ export const initialState = {
 
 
 
-const reducer = function (state, action){
+const reducer = function (state:any, action:any){
     switch (action.type){
         case SET_USERINFO:
             return Object.assign({}, state, {

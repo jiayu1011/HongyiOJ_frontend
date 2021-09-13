@@ -6,6 +6,7 @@ const store = createStore(
     reducer,
     initialState,
     //chrome中激活redux devtools插件
+    //@ts-ignore
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 

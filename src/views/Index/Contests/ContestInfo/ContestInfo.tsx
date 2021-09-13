@@ -1,10 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import {Breadcrumb} from "antd";
+import {IProps} from "../../../../config/interfaces";
 
-function ContestInfo(props){
-    const route = props.route;
-    const history = props.history;
-
+export const ContestInfo:React.FC<IProps> = (props) => {
+    const {route, history} = props
 
     const [contestId, setContestId] = useState('');
     const [contestInfo, setContestInfo] = useState({
@@ -33,5 +32,3 @@ function ContestInfo(props){
         </div>
     )
 }
-
-export default ContestInfo

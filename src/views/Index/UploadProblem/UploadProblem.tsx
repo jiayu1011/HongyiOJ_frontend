@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {Alert, Button, Form, Input, message, Select} from "antd";
 import http from "../../../utils/http";
-import utils from "../../../utils/utils";
+import {makeFormData} from "../../../utils/utils";
 import store from "../../../store";
 import {UPLOAD_PROBLEM_STRUCTURE} from "../../../config";
+import {HTTPHeaders, IProps} from "../../../config/interfaces";
 
-export default function UploadProblem(props){
+export const UploadProblem:React.FC<IProps> = (props) => {
     const {route, history, location} = props;
     const state = store.getState();
+
     const layout = {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
@@ -162,22 +164,22 @@ export default function UploadProblem(props){
     const [cnt, setCnt] = useState(4);
     const [uploadForm, setUploadForm] = useState(UPLOAD_PROBLEM_STRUCTURE)
 
-    function handleFormFinished(values){
+    const handleFormFinished = (values:any) => {
         for(let key in values){
             if(values[key]===undefined){
                 values[key] = ''
             }
         }
-        let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+        let userInfo = JSON.parse(sessionStorage.getItem('userInfo') as string);
         values['uploader'] = userInfo.username;
         console.log('uploadForm:', values);
 
-        let headers = {}
+        let headers:HTTPHeaders = {}
         if(state.logged){
             headers.Authorization = sessionStorage.getItem('token')
         }
 
-        http.post('/upload/problem', utils.makeFormData(values), {
+        http.post('/upload/problem', makeFormData(values), {
             headers: headers
         }).then(res => {
             console.log('uploadProblem:', res);
@@ -188,16 +190,16 @@ export default function UploadProblem(props){
                 });
 
             } else {
-                message.error(res.data.errMsg);
+                message.error(res.data.errMsg).then()
             }
         })
         .catch(err => {
-            message.error('上传题目失败!');
+            message.error('上传题目失败!').then()
         })
 
     }
 
-    function handleFormFinishedFailed(){
+    const handleFormFinishedFailed = () => {
 
     }
 
@@ -216,7 +218,7 @@ export default function UploadProblem(props){
 
 
     return (
-        <div>
+        <>
             {
                 state.logged ? null : (
                     <Alert
@@ -391,6 +393,6 @@ export default function UploadProblem(props){
 
                 </Form>
             </div>
-        </div>
+        </>
     )
 }

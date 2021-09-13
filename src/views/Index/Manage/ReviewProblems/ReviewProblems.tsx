@@ -1,15 +1,21 @@
 import React, {useEffect, useState} from "react";
-import {Button, Col, Drawer, List, message, Pagination, Row} from "antd";
+import {Button, Col, List, message, Pagination, Row} from "antd";
 import {LoadingOutlined} from "@ant-design/icons";
 import style from './ReviewProblems.module.scss'
 import http from "../../../../utils/http";
 import {DEFAULT_PROBLEM_LIST_PAGESIZE} from "../../../../config";
-import {Link} from "react-router-dom";
 import qs from "qs";
 import {APIS} from "../../../../config/apis";
+import {IProps} from "../../../../config/interfaces";
 
-export default function ReviewProblems(props){
+interface ReviewProblemItem{
+    problemId: string,
+    problemName: string,
+    reviewStatus: string,
+}
 
+
+export const ReviewProblems:React.FC<IProps> = (props) => {
 
     const statusDict = {
         reviewing: '审核中',
@@ -17,15 +23,15 @@ export default function ReviewProblems(props){
         disapproved: '未通过审核'
     }
 
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState<boolean>(false)
     const [problemList, setProblemList] = useState([])
-    const [resultSum, setResultSum] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(DEFAULT_PROBLEM_LIST_PAGESIZE);
+    const [resultSum, setResultSum] = useState<number>(0);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(DEFAULT_PROBLEM_LIST_PAGESIZE);
 
 
 
-    function getProblemList(){
+    const getProblemList = () => {
         setLoading(true)
         let params = {
             pageSize: pageSize,
@@ -49,7 +55,8 @@ export default function ReviewProblems(props){
      * @param problemId
      * @param reviewStatus
      */
-    function handleReview(problemId, reviewStatus){
+    const handleReview =
+        (problemId: string, reviewStatus: string) => {
         let data = {
             problemId: problemId,
             reviewStatus: reviewStatus
@@ -63,24 +70,24 @@ export default function ReviewProblems(props){
             if(res.data.isOk){
                 switch (reviewStatus){
                     case 'approved':
-                        message.success('题目'+problemId+'通过审核')
+                        message.success('题目'+problemId+'通过审核').then()
                         break
                     case 'disapproved':
-                        message.success('题目'+problemId+'未通过审核')
+                        message.success('题目'+problemId+'未通过审核').then()
                         break
                     case 'reviewing':
-                        message.success('题目'+problemId+'审核中')
+                        message.success('题目'+problemId+'审核中').then()
                         break
                     default:
 
                 }
             } else {
-                message.error(res.data.errMsg)
+                message.error(res.data.errMsg).then()
             }
 
             getProblemList()
         }).catch(err => {
-            message.error('通过审核失败')
+            message.error('通过审核失败').then()
         })
     }
 
@@ -92,7 +99,7 @@ export default function ReviewProblems(props){
 
 
     return (
-        <div>
+        <>
             <div>
                 <b>审核题目</b>
                 <div className='body'>
@@ -132,7 +139,7 @@ export default function ReviewProblems(props){
                                     className='problem-list'
                                     itemLayout='horizontal'
                                     dataSource={problemList}
-                                    renderItem={item => (
+                                    renderItem={(item:ReviewProblemItem) => (
                                         <List.Item>
                                             <Row style={{width: '100%'}}>
                                                 <Col span={1}></Col>
@@ -146,7 +153,7 @@ export default function ReviewProblems(props){
                                                     >{item.problemName}</a>
                                                 </Col>
                                                 <Col span={6}>
-                                                    <b>{statusDict[item.reviewStatus]}</b>
+                                                    <b>{(statusDict as any)[item.reviewStatus]}</b>
                                                 </Col>
                                                 <Col span={6}>
                                                     <Button
@@ -202,6 +209,6 @@ export default function ReviewProblems(props){
                     />
                 </div>
             </div>
-        </div>
+        </>
     )
 }

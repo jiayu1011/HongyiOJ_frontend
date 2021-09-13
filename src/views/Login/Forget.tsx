@@ -1,12 +1,12 @@
 import React, {useState} from "react";
-import {Input, message} from "antd";
+import {message} from "antd";
 import http from "../../utils/http";
-import utils from "../../utils/utils";
-import {Link} from "react-router-dom";
+import {makeFormData} from "../../utils/utils";
 import './Login.scss'
 import qs from 'qs'
+import {IProps} from "../../config/interfaces";
 
-function Forget(props){
+export const Forget:React.FC<IProps> = (props) => {
     const {history} = props
 
     const emailRegExp = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/
@@ -27,7 +27,7 @@ function Forget(props){
 
     
     
-    function handleNext(event){
+    const handleNext = (event:any) => {
         event.preventDefault()
         if (!validateForm.email) {
             return message.error('请输入邮箱')
@@ -39,26 +39,26 @@ function Forget(props){
             return message.error('请输入验证码')
         }
 
-        let data = {}
+        let data:any = {}
         data.verifyCode = validateForm.code
         data.email = validateForm.email
-        http.post('/verify', utils.makeFormData(data)).then(res => {
+        http.post('/verify', makeFormData(data)).then(res => {
             console.log('验证验证码:', res)
             if(res.data.isOk){
                 setFormType('password')
             } else {
-                message.error(res.data.errMsg)
+                message.error(res.data.errMsg).then()
             }
         }).catch(err => {
             console.log(err)
-            message.error('验证失败')
+            message.error('验证失败').then()
         })
 
 
    
     }
     
-    function handlePrev(event){
+    const handlePrev = (event:any) => {
         event.preventDefault()
         setFormType('validate')
         setForm({
@@ -68,40 +68,40 @@ function Forget(props){
 
     }
     
-    function handleValidate(e){
+    const handleValidate = (e:any) => {
         const {value} = e.target
         if(value && !emailRegExp.test(value)){
-            message.error('邮箱格式不正确')
+            message.error('邮箱格式不正确').then()
         }
     }
     
-    function handleInputChange(event, formType, name){
+    const handleInputChange = (event:any, formType:any, name:any) => {
         const {value} = event.target
         if(formType === 'validate'){
-            let tempForm = validateForm
+            let tempForm:any = validateForm
             tempForm[name] = value
             setValidateForm(tempForm)
         } else {
-            let tempForm = form
+            let tempForm:any = form
             tempForm[name] = value
             setForm(tempForm)
         }
     }
     
-    function handleGetCode(){
+    const handleGetCode = () => {
         if(!validateForm.email || !emailRegExp.test(validateForm.email)){
             return message.error('请输入正确的邮箱')
         }
         
         let s = 59
-        let timer = null
+        let timer:any = null
         http.get('/verify/code', {
             params: {
                 email: validateForm.email
             }
         }).then(res => {
             console.log('发送验证码:', res)
-            message.success('验证码已发送到邮箱，请注意查收')
+            message.success('验证码已发送到邮箱，请注意查收').then()
             setDisabled(true)
             setCodeText(`${s}秒后获取`)
             timer = setInterval(() => {
@@ -116,11 +116,11 @@ function Forget(props){
             }, 1000)
         }).catch(err => {
             console.log(err)
-            message.error('发送验证码失败')
+            message.error('发送验证码失败').then()
         })
     }
 
-    function handleResetPassword(event){
+    const handleResetPassword = (event:any) => {
         event.preventDefault()
         if(!form.password){
             return message.error('请输入密码')
@@ -131,7 +131,7 @@ function Forget(props){
         if(form.password !== form.repeatPassword){
             return message.error('两次输入密码不一致')
         }
-        let data = {}
+        let data:any = {}
         data.email = validateForm.email
         data.password = form.password
 
@@ -140,19 +140,19 @@ function Forget(props){
         }).then(res => {
             console.log('重置密码:', res)
             if(res.data.isOk){
-                message.success('密码重置成功，请重新登录账号，3秒后自动跳转至登录页面')
+                message.success('密码重置成功，请重新登录账号，3秒后自动跳转至登录页面').then()
                 setTimeout(() => {
                     history.push('/login')
 
                 }, 3000)
             } else {
-                message.error(res.data.errMsg)
+                message.error(res.data.errMsg).then()
             }
         })
     }
     
     return (
-        <div>
+        <>
             <div className="login-wrapper forget">
                 <div className={`container ${formType === 'password' ? 'right-panel-active' : ''}`} id="container">
                     <div className="form-container validate-container">
@@ -196,7 +196,7 @@ function Forget(props){
                                 className="mt-20"
                                 onClick={() => handleNext}
                             >找回密码</button>
-                            <Link to="/login">已有账号，去登录</Link>
+                            <a href={"/login"}>已有账号，去登录</a>
                         </form>
                     </div>
                     <div className="form-container password-container">
@@ -225,8 +225,7 @@ function Forget(props){
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 
-export default Forget

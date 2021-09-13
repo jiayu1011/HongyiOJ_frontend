@@ -1,15 +1,16 @@
 import React, {useEffect, useState} from "react";
 
 import './ProblemList.scss'
-import {Input, List, Avatar, Row, Col, Pagination, Button, Form, Drawer, message, Breadcrumb} from "antd";
-import {LoadingOutlined, SearchOutlined} from "@ant-design/icons";
+import {Input, List, Row, Col, Pagination, Button, Drawer, message, Breadcrumb} from "antd";
+import {LoadingOutlined} from "@ant-design/icons";
 import http from "../../../../utils/http";
 import {DEFAULT_PROBLEM_LIST_PAGESIZE} from '../../../../config'
 import store from "../../../../store";
 import {APIS} from "../../../../config/apis";
+import {HTTPHeaders, IProps} from "../../../../config/interfaces";
 
 
-export default function ProblemList(props){
+export const ProblemList:React.FC<IProps> = (props) => {
     const {history} = props;
     const {Search} = Input;
     const state = store.getState();
@@ -40,12 +41,12 @@ export default function ProblemList(props){
 
     function getProblemList(){
         setLoading(true);
-        let params = {
+        let params:any = {
             pageSize: pageSize,
             currentPage: currentPage,
             reviewStatus: 'approved'
         }
-        let headers = {}
+        let headers:HTTPHeaders = {}
         if(state.logged) {
             params.username = state.userInfo.username
             headers.Authorization = sessionStorage.getItem('token');
@@ -61,16 +62,16 @@ export default function ProblemList(props){
             setResultSum(res.data.resultSum);
 
         }).catch(err => {
-            message.error('请求题目列表失败!')
+            message.error('请求题目列表失败!').then()
         })
     }
 
-    function handleSearchInputChange(e){
+    const handleSearchInputChange = (e:any) => {
         setSearchInput(e.target.value);
     }
 
-    function handleProblemSearch(){
-        let params = {};
+    const handleProblemSearch = () => {
+        let params:any = {};
         if(searchInput.startsWith('P')){
             params.problemId = searchInput;
         } else {
@@ -84,7 +85,7 @@ export default function ProblemList(props){
         })
     }
 
-    function handleProblemClick(){
+    const handleProblemClick = () => {
 
     }
 
@@ -95,10 +96,10 @@ export default function ProblemList(props){
     }, [currentPage]);
 
     return(
-        <div>
+        <>
             <Breadcrumb>
-                <Breadcrumb.Item key='problems'><a href='/problems'>题库</a></Breadcrumb.Item>
-                <Breadcrumb.Item key='problems_list'><a href='/problems/list'>题目列表</a></Breadcrumb.Item>
+                <Breadcrumb.Item key='problems'><a href={'/problems'}>题库</a></Breadcrumb.Item>
+                <Breadcrumb.Item key='problems_list'><a href={'/problems/list'}>题目列表</a></Breadcrumb.Item>
             </Breadcrumb>
             <div className='body'>
 
@@ -157,14 +158,14 @@ export default function ProblemList(props){
                 <div className="list-part">
                     {/*The head column size must fit the following list*/}
                     <Row >
-                        <Col span={1}></Col>
+                        <Col span={1}/>
                         <Col span={2}>
                             <div>题号</div>
                         </Col>
                         <Col span={8}>
                             <div>题目名称</div>
                         </Col>
-                        <Col span={8}></Col>
+                        <Col span={8}/>
                     </Row>
                     {
                         loading? (
@@ -177,14 +178,14 @@ export default function ProblemList(props){
                                 renderItem={item => (
                                     <List.Item>
                                         <Row style={{width: '100%'}}>
-                                            <Col span={1}></Col>
+                                            <Col span={1}/>
                                             <Col span={2}>
                                                 <div>{item.problemId}</div>
                                             </Col>
                                             <Col span={8}>
                                                 <a className='problem-name' href={'/problems/'+item.problemId}>{item.problemName}</a>
                                             </Col>
-                                            <Col span={8}></Col>
+                                            <Col span={8}/>
 
 
                                         </Row>
@@ -212,7 +213,7 @@ export default function ProblemList(props){
                     showQuickJumper
                 />
             </div>
-        </div>
+        </>
 
     )
 

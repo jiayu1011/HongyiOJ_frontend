@@ -1,6 +1,7 @@
 import React from "react";
+import {IProps} from "../config/interfaces";
 
-export default function MyFooter(props){
+export const MyFooter:React.FC<IProps> = () => {
 
     return (
         <div>

@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import logo from './logo.svg'
 import './App.css'
 import http from "./utils/http";
+import {IProps} from "./config/interfaces";
 
 
-function App() {
+export const App:React.FC<IProps> = () => {
   const [count, setCount] = useState(0)
 
   const [member, setMember] = useState('');
@@ -58,4 +59,3 @@ function App() {
   )
 }
 
-export default App

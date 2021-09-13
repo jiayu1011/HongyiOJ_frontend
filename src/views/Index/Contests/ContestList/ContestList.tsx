@@ -1,10 +1,10 @@
 import React from "react";
 
-
 import './ContestList.scss'
 import {Breadcrumb} from "antd";
+import {IProps} from "../../../../config/interfaces";
 
-export default function ContestList(props){
+export const ContestList:React.FC<IProps> = (props) => {
 
 
     return (
