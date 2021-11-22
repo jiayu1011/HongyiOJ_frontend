@@ -10,13 +10,14 @@ import {ContestInfo} from "../views/Index/Contests/ContestInfo/ContestInfo";
 import {ProblemList} from "../views/Index/Problems/ProblemList/ProblemList";
 import {ContestList} from "../views/Index/Contests/ContestList/ContestList";
 import {Manage} from "../views/Index/Manage/Manage";
-import {ReviewProblems} from "../views/Index/Manage/ReviewProblems/ReviewProblems";
+import {ManageProblems} from "../views/Index/Manage/ManageProblems/ManageProblems";
 import {UploadProblem} from "../views/Index/UploadProblem/UploadProblem";
 import {Mobile} from "../components/Mobile";
 import {Forget} from "../views/Login/Forget";
 import {ProblemSubmit} from "../views/Index/Problems/ProblemSubmit/ProblemSubmit";
 import {DiscussionList} from "../views/Index/Discusstions/DiscussionList/DiscussionList";
 import {EvaluationList} from "../views/Index/EvaluationList/EvaluationList";
+import {ManageUsers} from "../views/Index/Manage/ManageUsers/ManageUsers";
 
 
 
@@ -101,9 +102,14 @@ const routes = [
                 component: Manage,
                 routes: [
                     {
-                        path: '/manage/reviewProblems',
+                        path: '/manage/manageProblems',
                         exact: true,
-                        component: ReviewProblems,
+                        component: ManageProblems,
+                    },
+                    {
+                        path: '/manage/manageUsers',
+                        exact: true,
+                        component: ManageUsers,
                     }
                 ]
             },

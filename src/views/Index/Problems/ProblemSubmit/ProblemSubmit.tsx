@@ -43,14 +43,15 @@ export const ProblemSubmit:React.FC<IProps> = (props) => {
         }).then(res => {
             console.log('提交代码:', res)
             if(res.data.isOk){
-                message.success('代码提交成功').then()
-                history.push('/evaluationList')
+
             } else {
                 message.error(res.data.errMsg).then()
             }
         }).catch(err => {
             message.error('提交代码失败').then()
         })
+        message.success('代码提交成功').then()
+        history.push('/evaluationList')
 
 
     }
@@ -112,8 +113,12 @@ export const ProblemSubmit:React.FC<IProps> = (props) => {
                                             color: 'red'
                                         }}>* 提交代码模式为ACM模式，即需要提交完整的、可以处理输入输出的程序</b>
                                         <Form.Item
-                                            label=''
+                                            label='编程语言'
                                             name='codeLanguage'
+                                            rules={[{
+                                                required: true,
+                                                message: '请选择编程语言类型'
+                                            }]}
                                         >
                                             <Select
                                                 placeholder='请选择编程语言类型'
@@ -129,8 +134,12 @@ export const ProblemSubmit:React.FC<IProps> = (props) => {
                                             </Select>
                                         </Form.Item>
                                         <Form.Item
-                                            label=''
+                                            label='提交代码'
                                             name='code'
+                                            rules={[{
+                                                required: true,
+                                                message: '提交代码不能为空'
+                                            }]}
                                         >
                                             <Input.TextArea
                                                 rows={12}

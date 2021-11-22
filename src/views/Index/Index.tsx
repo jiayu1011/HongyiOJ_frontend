@@ -112,8 +112,11 @@ export const Index: React.FC<IProps> = (props) => {
                     case "/home":
                         sk = 'home'
                         break
-                    case "/manage/reviewProblems":
-                        sk = 'manage/reviewProblems'
+                    case "/manage/manageProblems":
+                        sk = 'manage/manageProblems'
+                        break
+                    case "/manage/manageUsers":
+                        sk = 'manage/manageUsers'
                         break
                     case "/problems/list":
                         sk = 'problem'
@@ -177,7 +180,8 @@ export const Index: React.FC<IProps> = (props) => {
                     icon={<UserOutlined/>}
                     title='后台管理'
                 >
-                    <Menu.Item key='manage/reviewProblems'>审核题目</Menu.Item>
+                    <Menu.Item key='manage/manageProblems'>管理题目</Menu.Item>
+                    <Menu.Item key='manage/manageUsers'>管理用户</Menu.Item>
 
                 </SubMenu>
             ) : null}

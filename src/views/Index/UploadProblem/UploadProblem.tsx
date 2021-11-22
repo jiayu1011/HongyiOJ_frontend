@@ -28,8 +28,8 @@ export const UploadProblem:React.FC<IProps> = (props) => {
         ioExamples: 1000,
         problemTips: 1000,
         dataRange: 1000,
-        dataGenerator: 5000,
-        stdProgram: 5000,
+        stdInput: 5000,
+        stdOutput: 5000,
     }
 
     const exampleProblem = {
@@ -75,88 +75,20 @@ export const UploadProblem:React.FC<IProps> = (props) => {
             'NOIP 2008 提高组第三题',
         dataRange: '对于 30% 的数据，1≤m,n≤10；\n' +
             '对于 100% 的数据满足：01≤m,n≤50。',
-        dataGenerator: 'import random\n' +
-            'import pprint\n' +
+        stdInput: '9\n' +
             '\n' +
-            'def isLegalTriangle(a, b, c):\n' +
-            '    return a+b>c and a+c>b and b+c>a\n' +
+            '81\n' +
             '\n' +
+            '99\n' +
             '\n' +
-            '# 数据生成器\n' +
-            'def Triangle_TestDataGenerator(INITIAL_RANGE_A, INITIAL_RANGE_B, BITS=2, BATCH_NUM=50):\n' +
-            '    """\n' +
-            '    :param INITIAL_RANGE_A: 初始边a的生成范围\n' +
-            '    :param INITIAL_RANGE_B: 初始边b的生成范围\n' +
-            '    :param BITS: 保留小数位数\n' +
-            '    :param BATCH_NUM: 期望生成的测试数据组数\n' +
-            '    :return: data: 所有测试数据，以列表形式返回\n' +
-            '    """\n' +
+            '-380\n',
+        stdOutput: '9\n' +
             '\n' +
-            '    data = []\n' +
+            '18\n' +
             '\n' +
-            '    for i in range(BATCH_NUM):\n' +
-            '        a = 0\n' +
-            '        b = 0\n' +
-            '        # 确保a, b不为0\n' +
-            '        while a == 0 and b == 0:\n' +
-            '            a = round(random.uniform(INITIAL_RANGE_A[0], INITIAL_RANGE_A[1]), BITS)\n' +
-            '            b = round(random.uniform(INITIAL_RANGE_B[0], INITIAL_RANGE_B[1]), BITS)\n' +
+            '99\n' +
             '\n' +
-            '        INITIAL_RANGE_C = (abs(a - b), a + b)\n' +
-            '\n' +
-            '        c = 0\n' +
-            '        while c == 0:\n' +
-            '            c = round(random.uniform(INITIAL_RANGE_C[0], INITIAL_RANGE_C[1]), BITS)\n' +
-            '\n' +
-            '        res = \'\'\n' +
-            '        if isLegalTriangle(a, b, c):\n' +
-            '            res = \'legal\'\n' +
-            '        else:\n' +
-            '            res = \'illegal\'\n' +
-            '\n' +
-            '        # print(\'triangle{}: ({}, {}, {}) is {}\'.format(i, a, b, c, res))\n' +
-            '        data.append((a, b, c))\n' +
-            '\n' +
-            '    return data\n' +
-            '\n' +
-            '\n' +
-            '\n' +
-            '\n' +
-            'if __name__ == \'__main__\':\n' +
-            '    # a, b初始值范围\n' +
-            '    INITIAL_RANGE_A = (0, 10)\n' +
-            '    INITIAL_RANGE_B = (0, 20)\n' +
-            '    # 保留小数位数\n' +
-            '    BITS = 2\n' +
-            '\n' +
-            '    data = Triangle_TestDataGenerator(INITIAL_RANGE_A, INITIAL_RANGE_B)\n' +
-            '    # pprint.pprint(data)\n' +
-            '\n' +
-            '\n' +
-            '\n' +
-            '\n' +
-            '\n',
-        stdProgram: 'import math\n' +
-            '\n' +
-            'def Triangle_StdProgram(a, b, c, BITS=2):\n' +
-            '    """\n' +
-            '    :param a:\n' +
-            '    :param b:\n' +
-            '    :param c:\n' +
-            '    :param BITS: 结果保留小数位数\n' +
-            '    :return:\n' +
-            '    """\n' +
-            '\n' +
-            '    # 海伦公式\n' +
-            '    p = (a + b + c) / 2\n' +
-            '\n' +
-            '    return round(math.sqrt(p * (p - a) * (p - b) * (p - c)), BITS)\n' +
-            '\n' +
-            '\n' +
-            'if __name__ == \'__main__\':\n' +
-            '    temp_triangle = (4.8, 5.2, 6.3)\n' +
-            '\n' +
-            '    print(Triangle_StdProgram(temp_triangle[0], temp_triangle[1], temp_triangle[2]))\n',
+            '-83\n'
 
 
     }
@@ -240,7 +172,10 @@ export const UploadProblem:React.FC<IProps> = (props) => {
                     <Form.Item
                         label='题目名称'
                         name='problemName'
-                        rules={[{required: true}]}
+                        rules={[{
+                            required: true,
+                            message: '请输入题目名称'
+                        }]}
                     >
                         <Input
                             placeholder={'例:' +exampleProblem.problemName}
@@ -259,7 +194,10 @@ export const UploadProblem:React.FC<IProps> = (props) => {
                     <Form.Item
                         label='题目难度'
                         name='problemDiff'
-                        rules={[{required: true}]}
+                        rules={[{
+                            required: true,
+                            message: '请选择题目难度'
+                        }]}
                     >
                         <Select placeholder='请选择题目难度（入门、简单、中等、困难）'>
                             <Select.Option value='elementary'>入门</Select.Option>
@@ -282,7 +220,10 @@ export const UploadProblem:React.FC<IProps> = (props) => {
                     <Form.Item
                         label='题目描述（题目的描述）'
                         name='problemDes'
-                        rules={[{required: true}]}
+                        rules={[{
+                            required: true,
+                            message: '请输入题目描述'
+                        }]}
                     >
                         <Input.TextArea
                             rows={8}
@@ -294,6 +235,10 @@ export const UploadProblem:React.FC<IProps> = (props) => {
                     <Form.Item
                         label='时间限制（允许的最长运行时间,单位为ms）'
                         name='timeLimit'
+                        rules={[{
+                            required: true,
+                            message: '请输入运行时间限制'
+                        }]}
                     >
                         <Input
                             placeholder={'例:' +exampleProblem.timeLimit}
@@ -303,6 +248,10 @@ export const UploadProblem:React.FC<IProps> = (props) => {
                     <Form.Item
                         label='空间限制（运行时允许占用的最大空间,单位为MB）'
                         name='memoryLimit'
+                        rules={[{
+                            required: true,
+                            message: '请输入运行空间限制'
+                        }]}
                     >
                         <Input
                             placeholder={'例:' +exampleProblem.memoryLimit}
@@ -365,24 +314,24 @@ export const UploadProblem:React.FC<IProps> = (props) => {
                         />
                     </Form.Item>
                     <Form.Item
-                        label='数据生成器（测试数据生成器）'
-                        name='dataGenerator'
+                        label='标准测试输入数据'
+                        name='stdInput'
                     >
                         <Input.TextArea
                             rows={8}
-                            placeholder={'例:\n'+exampleProblem.dataGenerator}
-                            maxLength={exampleLengthLimit.dataGenerator}
+                            placeholder={'例:\n'+exampleProblem.stdInput}
+                            maxLength={exampleLengthLimit.stdInput}
                             showCount
                         />
                     </Form.Item>
                     <Form.Item
-                        label='标准程序（能够保证输出结果绝对正确的程序）'
-                        name='stdProgram'
+                        label='标准测试输出数据（与输入相对应）'
+                        name='stdOutput'
                     >
                         <Input.TextArea
                             rows={8}
-                            placeholder={'例:\n'+exampleProblem.stdProgram}
-                            maxLength={exampleLengthLimit.stdProgram}
+                            placeholder={'例:\n'+exampleProblem.stdOutput}
+                            maxLength={exampleLengthLimit.stdOutput}
                             showCount
                         />
                     </Form.Item>

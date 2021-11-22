@@ -1,0 +1,54 @@
+$box-width: 80%;
+
+.body{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font: {
+    size: 15px;
+  };
+
+  .body-title{
+    align-self: flex-start;
+    font: {
+      size: 30px;
+      weight: bold;
+
+    };
+
+  }
+
+  .search-part{
+    width: $box-width;
+    padding: 10px;
+    margin: 10px 0;
+    background: {
+      color: white;
+    };
+
+    .search-row{
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      .search-input{
+
+      }
+    }
+  }
+
+  .list-part{
+    width: $box-width;
+    margin: 30px 0;
+    background: {
+      color: white;
+    };
+
+    .problem-name{
+
+    }
+
+    .problem-name:hover{
+      color: #1d39c4;
+    }
+  }
+}

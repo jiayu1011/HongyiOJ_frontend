@@ -16,8 +16,8 @@ export const UPLOAD_PROBLEM_STRUCTURE = {
     ioExamples: '',
     problemTips: '',
     dataRange: '',
-    dataGenerator: '',
-    stdProgram: '',
+    stdInput: '',
+    stdOutput: ''
 }
 
 export const UPLOAD_PROBLEM_TEST_STRUCTURE = {
@@ -35,8 +35,8 @@ export const UPLOAD_PROBLEM_TEST_STRUCTURE = {
     ioExamples: 'ioExamples',
     problemTips: 'problemTips',
     dataRange: 'dataRange',
-    dataGenerator: 'dataGenerator',
-    stdProgram: 'stdProgram',
+    stdInput: 'stdInput',
+    stdOutput: 'stdOutput'
 }
 
 export const LENGTH_LIMIT = {

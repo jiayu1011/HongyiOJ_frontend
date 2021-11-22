@@ -8,6 +8,7 @@ import {IProps} from "../../../config/interfaces";
 interface EvaluationInfo {
     evaluationId?: string,
     code?: string,
+    errLog?: string,
 
 }
 
@@ -20,16 +21,11 @@ export const EvaluationList:React.FC<IProps> = (props) => {
             title: '评测编号',
             dataIndex: 'evaluationId',
             key: 'evaluationId',
-            render: (text: string) =>
+            render: (text: string, record: any, index: any) =>
                 <a
                     onClick={(e) => {
-                        let curId = (e.target as HTMLElement).innerHTML
-                        evaluationList.forEach(item => {
-                            if(item['evaluationId'] === curId){
-                                setCurrentEvaluation(item)
-                            }
-                        })
-                        setIsModalVisible(true)
+                        setCurrentEvaluation(record)
+                        setIsCodeModalVisible(true)
                     }}
                 >{text}</a>,
         },
@@ -54,10 +50,15 @@ export const EvaluationList:React.FC<IProps> = (props) => {
             title: '结果',
             dataIndex: 'result',
             key: 'result',
-            render: (text: string) => <a style={{
-                color: 'red',
-                cursor: 'default'
-            }}>{text}</a>
+            render: (text:any, record:any, index:any) => <a
+                style={{
+                    color: 'red',
+                }}
+                onClick={(e) => {
+                    setCurrentEvaluation(record)
+                    setIsErrModalVisible(true)
+                }}
+            >{text}</a>
         },
         {
             title: '时间占用',
@@ -94,10 +95,12 @@ export const EvaluationList:React.FC<IProps> = (props) => {
     const [pageSize, setPageSize] = useState(DEFAULT_PROBLEM_LIST_PAGESIZE)
     const [queryForm, setQueryForm] = useState({})
     const [currentEvaluation, setCurrentEvaluation] = useState<EvaluationInfo>({})
-    const [isModalVisible, setIsModalVisible] = useState(false)
+    const [isCodeModalVisible, setIsCodeModalVisible] = useState(false)
+    const [isErrModalVisible, setIsErrModalVisible] = useState(false)
 
 
-    function getEvaluationList(){
+
+    const getEvaluationList = () => {
         const params = {
             currentPage: currentPage,
             pageSize: pageSize,
@@ -120,11 +123,11 @@ export const EvaluationList:React.FC<IProps> = (props) => {
             setEvaluationList(tempList)
 
         }).catch(err => {
-            message.error('获取评测结果列表失败')
+            message.error('获取评测结果列表失败').then()
         })
     }
 
-    function handleQueryFormChange(e: React.ChangeEvent<HTMLInputElement>, key: string){
+    const handleQueryFormChange = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         let tempForm:any = queryForm
         if(e.target.value.trim()){
             tempForm[key] = e.target.value
@@ -135,8 +138,9 @@ export const EvaluationList:React.FC<IProps> = (props) => {
 
     }
 
-    function intervalGetEvaluationList(){
+    const intervalGetEvaluationList = () => {
         getEvaluationList()
+        // 每30秒刷新一次评测结果列表
         setInterval(() => {
             getEvaluationList()
         }, 30*1000)
@@ -207,17 +211,30 @@ export const EvaluationList:React.FC<IProps> = (props) => {
             </div>
             <Modal
                 title={currentEvaluation.evaluationId+'的提交代码'}
-                visible={isModalVisible}
+                visible={isCodeModalVisible}
                 footer={null}
                 onOk={() => {
-                    setIsModalVisible(false)
+                    setIsCodeModalVisible(false)
                 }}
                 onCancel={() => {
-                    setIsModalVisible(false)
+                    setIsCodeModalVisible(false)
                 }}
 
             >
                 <div>{currentEvaluation.code}</div>
+            </Modal>
+            <Modal
+                title={currentEvaluation.evaluationId+'的错误日志'}
+                visible={isErrModalVisible}
+                footer={null}
+                onOk={() => {
+                    setIsErrModalVisible(false)
+                }}
+                onCancel={() => {
+                    setIsErrModalVisible(false)
+                }}
+            >
+                <div>{currentEvaluation.errLog}</div>
             </Modal>
         </>
     )

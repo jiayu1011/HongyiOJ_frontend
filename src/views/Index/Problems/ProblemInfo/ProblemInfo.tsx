@@ -94,7 +94,13 @@ export const ProblemInfo:React.FC<IProps> = (props) => {
 
                     <Button
                         type='primary'
-                        onClick={() => history.push('/problems/'+problemInfo.problemId+'/submit')}
+                        onClick={() => {
+                            if(state.logged){
+                                history.push('/problems/' + problemInfo.problemId + '/submit')
+                            } else {
+                                message.info('请先登录后再提交代码~').then()
+                            }
+                        }}
                     >提交答案</Button>
                     <Button
                         type='dashed'

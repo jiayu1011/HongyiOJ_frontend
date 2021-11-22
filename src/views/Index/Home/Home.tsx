@@ -58,13 +58,13 @@ export const Home:React.FC<IProps> = (props) => {
         if(jumpInput.length===0){
             message.error('跳转题号不能为空!').then();
         } else {
-            history.push('/problems/' + jumpInput);
+            history.push(`/problems/${jumpInput}`);
 
         }
     }
     const handleRandomJumpSubmit = (e: any) => {
         let path = '/problems/';
-        let problemId = 'P' + _.random(1001, 1005);
+        let problemId = 'P' + _.random(10001, 10005);
         history.push(path + problemId);
     }
     const handleContestJump = (e: any) => {
@@ -151,8 +151,8 @@ export const Home:React.FC<IProps> = (props) => {
                                 </Form>
 
                                 <div className='jump-action'>
-                                    <Button type='primary' onClick={() => handleCommonJumpSubmit}><SearchOutlined />跳转</Button>
-                                    <Button danger onClick={() => handleRandomJumpSubmit}><AimOutlined />随机跳题</Button>
+                                    <Button type='primary' onClick={handleCommonJumpSubmit}><SearchOutlined />跳转</Button>
+                                    <Button danger onClick={handleRandomJumpSubmit}><AimOutlined />随机跳题</Button>
                                 </div>
 
                             </div>

@@ -11,6 +11,10 @@ export const APIS = {
     MANAGE: {
         REVIEW_PROBLEM: '/review/problem',
         REVIEW_CONTEST: '/review/contest',
+        MODIFY_PROBELM: '/modify/problem',
+        MODIFY_USER: '/modify/user',
+        DELETE_PROBLEM: '/delete/problem',
+        DELETE_USER: '/delete/user',
 
     },
     PROBLEM: {

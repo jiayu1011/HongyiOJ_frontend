@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from "react";
-import {Button, Col, List, message, Pagination, Row} from "antd";
+import {Button, Col, List, message, Modal, Pagination, Row} from "antd";
 import {LoadingOutlined} from "@ant-design/icons";
-import style from './ReviewProblems.module.scss'
+import style from './ManageProblems.module.scss'
 import http from "../../../../utils/http";
 import {DEFAULT_PROBLEM_LIST_PAGESIZE} from "../../../../config";
 import qs from "qs";
 import {APIS} from "../../../../config/apis";
-import {IProps} from "../../../../config/interfaces";
+import {HTTPHeaders, IProps} from "../../../../config/interfaces";
+import store from "../../../../store";
+import utils from "../../../../utils/utils";
 
 interface ReviewProblemItem{
     problemId: string,
@@ -15,7 +17,9 @@ interface ReviewProblemItem{
 }
 
 
-export const ReviewProblems:React.FC<IProps> = (props) => {
+export const ManageProblems:React.FC<IProps> = (props) => {
+
+    const state = store.getState()
 
     const statusDict = {
         reviewing: '审核中',
@@ -28,7 +32,7 @@ export const ReviewProblems:React.FC<IProps> = (props) => {
     const [resultSum, setResultSum] = useState<number>(0);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(DEFAULT_PROBLEM_LIST_PAGESIZE);
-
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState<boolean>(false)
 
 
     const getProblemList = () => {
@@ -91,6 +95,37 @@ export const ReviewProblems:React.FC<IProps> = (props) => {
         })
     }
 
+    const handleDelete = () => {
+        setIsDeleteModalVisible(true)
+
+    }
+
+    const deleteProblem = (problemId: string) => {
+        setIsDeleteModalVisible(false)
+        let params = {
+            problemId: problemId,
+            operator: state.userInfo.username
+        }
+        let headers:HTTPHeaders = {
+            Authorization: sessionStorage.getItem('token')
+        }
+        http.delete(APIS.MANAGE.DELETE_PROBLEM, {
+            params: params,
+            headers: headers
+        }).then(res => {
+            console.log('delete problem:', res)
+            if(res.data.isOk){
+                message.success(`${problemId}删除成功!`).then(() => {
+                    window.location.reload();
+                })
+            } else {
+                message.error(`${problemId}删除失败`).then()
+            }
+        }).catch(err => {
+            message.error(err).then()
+        })
+    }
+
 
 
     useEffect(() => {
@@ -101,7 +136,7 @@ export const ReviewProblems:React.FC<IProps> = (props) => {
     return (
         <>
             <div>
-                <b>审核题目</b>
+                <b>管理题目</b>
                 <div className='body'>
                     <div className='body-title'>题目列表</div>
                     <div className="search-part">
@@ -124,13 +159,14 @@ export const ReviewProblems:React.FC<IProps> = (props) => {
                             <Col span={6}>
                                 <div>题目名称</div>
                             </Col>
-                            <Col span={6}>
+                            <Col span={4}>
                                 <div>状态</div>
                             </Col>
                             <Col span={6}>
                                 <div>操作</div>
                             </Col>
                         </Row>
+
                         {
                             loading? (
                                 <div style={{textAlign: 'center'}}>加载中...<LoadingOutlined /></div>
@@ -152,7 +188,7 @@ export const ReviewProblems:React.FC<IProps> = (props) => {
                                                         href={'/problems/'+item.problemId}
                                                     >{item.problemName}</a>
                                                 </Col>
-                                                <Col span={6}>
+                                                <Col span={4}>
                                                     <b>{(statusDict as any)[item.reviewStatus]}</b>
                                                 </Col>
                                                 <Col span={6}>
@@ -182,8 +218,24 @@ export const ReviewProblems:React.FC<IProps> = (props) => {
                                                         disabled={item.reviewStatus==='reviewing'}
                                                     >审核中</Button>
                                                 </Col>
+                                                <Col span={2}>
+                                                    <a >编辑</a>
+                                                </Col>
+                                                <Col span={2}>
+                                                    <a onClick={handleDelete}>删除</a>
+                                                </Col>
 
                                             </Row>
+                                            <Modal
+                                                title='提示'
+                                                visible={isDeleteModalVisible}
+                                                onOk={() => deleteProblem(item.problemId)}
+                                                onCancel={() => {
+                                                    setIsDeleteModalVisible(false);
+                                                }}
+                                            >
+                                                <div>确认要删除{item.problemId}吗?</div>
+                                            </Modal>
 
                                         </List.Item>
                                     )}
