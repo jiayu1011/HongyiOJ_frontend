@@ -64,13 +64,13 @@ export const EvaluationList:React.FC<IProps> = (props) => {
             title: '时间占用',
             dataIndex: 'timeCost',
             key: 'timeCost',
-            render: (text: string) => text? <div>{text}ms</div> : null
+            render: (text: string) => <div>{text}ms</div>
         },
         {
             title: '内存占用',
             dataIndex: 'memoryCost',
             key: 'memoryCost',
-            render: (text: string) => text? <div>{text}MB</div> : null
+            render: (text: string) => <div>{text}MB</div>
         },
         {
             title: '语言种类',
@@ -97,6 +97,7 @@ export const EvaluationList:React.FC<IProps> = (props) => {
     const [currentEvaluation, setCurrentEvaluation] = useState<EvaluationInfo>({})
     const [isCodeModalVisible, setIsCodeModalVisible] = useState(false)
     const [isErrModalVisible, setIsErrModalVisible] = useState(false)
+    const [totalEvaluationNum, setTotalEvaluationNum] = useState<number>(0)
 
 
 
@@ -121,6 +122,7 @@ export const EvaluationList:React.FC<IProps> = (props) => {
                 })
             })
             setEvaluationList(tempList)
+            setTotalEvaluationNum(res.data.total)
 
         }).catch(err => {
             message.error('获取评测结果列表失败').then()
@@ -139,17 +141,20 @@ export const EvaluationList:React.FC<IProps> = (props) => {
     }
 
     const intervalGetEvaluationList = () => {
+        clearTimeout()
+        clearInterval()
         getEvaluationList()
-        // 每30秒刷新一次评测结果列表
-        setInterval(() => {
-            getEvaluationList()
-        }, 30*1000)
+
+        // // 每30秒刷新一次评测结果列表
+        // setInterval(() => {
+        //     getEvaluationList()
+        // }, 30*1000)
     }
 
     useEffect(() => {
         intervalGetEvaluationList()
 
-    }, [])
+    }, [currentPage, pageSize])
 
     return (
         <>
@@ -205,7 +210,9 @@ export const EvaluationList:React.FC<IProps> = (props) => {
                         },
                         defaultPageSize: pageSize,
                         showQuickJumper: true,
-                        position: ['bottomCenter']
+                        position: ['bottomCenter'],
+                        total: totalEvaluationNum,
+                        showTotal: total => `Total ${total} items`
                     }}
                 />
             </div>
@@ -221,7 +228,15 @@ export const EvaluationList:React.FC<IProps> = (props) => {
                 }}
 
             >
-                <div>{currentEvaluation.code}</div>
+                <div
+                    style={{
+                        whiteSpace: 'pre',
+                        height: '500px',
+                        overflowY: 'scroll'
+                    }}
+                >
+                    {currentEvaluation.code}
+                </div>
             </Modal>
             <Modal
                 title={currentEvaluation.evaluationId+'的错误日志'}
@@ -234,7 +249,15 @@ export const EvaluationList:React.FC<IProps> = (props) => {
                     setIsErrModalVisible(false)
                 }}
             >
-                <div>{currentEvaluation.errLog}</div>
+                <div
+                    style={{
+                        whiteSpace: 'pre',
+                        height: '500px',
+                        overflowY: 'scroll'
+                    }}
+                >
+                    {currentEvaluation.errLog}
+                </div>
             </Modal>
         </>
     )

@@ -113,7 +113,7 @@ export const ProblemInfo:React.FC<IProps> = (props) => {
                 <div className='problem-card'>
                     {problemInfo.problemBg===''? null:<div className='problem-unit'>
                         <div className='unit-title'>题目背景</div>
-                        <div>{formatContent(problemInfo.problemBg)}</div>
+                        <div className={'unit-content'}>{formatContent(problemInfo.problemBg)}</div>
                     </div>}
                     <div className='problem-unit'>
                         <div className='unit-title'>题目描述</div>
@@ -123,15 +123,15 @@ export const ProblemInfo:React.FC<IProps> = (props) => {
                     </div>
                     <div className='problem-unit'>
                         <div className='unit-title'>输入格式</div>
-                        <div>{formatContent(problemInfo.inputFormat)}</div>
+                        <div className={'unit-content'}>{formatContent(problemInfo.inputFormat)}</div>
                     </div>
                     <div className='problem-unit'>
                         <div className='unit-title'>输出格式</div>
-                        <div>{formatContent(problemInfo.outputFormat)}</div>
+                        <div className={'unit-content'}>{formatContent(problemInfo.outputFormat)}</div>
                     </div>
                     <div className='problem-unit'>
                         <div className='unit-title'>输入输出样例</div>
-                        <div>{formatContent(problemInfo.ioExamples)}</div>
+                        <div className={'unit-content'}>{formatContent(problemInfo.ioExamples)}</div>
                     </div>
 
 

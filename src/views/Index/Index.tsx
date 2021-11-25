@@ -68,8 +68,12 @@ export const Index: React.FC<IProps> = (props) => {
     }
 
     function handleRouter(item: MenuInfo){
-        // console.log(item);
-        history.push('/' + item.key);
+
+        if(window.location.pathname==`/${item.key}`){
+            window.location.reload()
+        } else {
+            history.push('/' + item.key);
+        }
     }
 
 
@@ -136,10 +140,11 @@ export const Index: React.FC<IProps> = (props) => {
                 }
 
         }
-
         setSelectedKeys([sk]);
 
+
     }, [location.pathname]);
+
 
 
     //用户下拉选项单
@@ -171,9 +176,11 @@ export const Index: React.FC<IProps> = (props) => {
     const sideMenu = state.logged? (
         <Menu
             theme="dark"
+            defaultOpenKeys={window.location.pathname.startsWith('/manage')? ['manage']:[]}
             selectedKeys={selectedKeys}
             onClick={(item) => handleRouter(item)}
-            mode="inline">
+            mode="inline"
+        >
             {userInfo.identity === 'admin' ? (
                 <SubMenu
                     key="manage"
@@ -217,7 +224,11 @@ export const Index: React.FC<IProps> = (props) => {
     return (
         <>
             <Layout style={{ minHeight: '100vh' }}>
-                <Sider className="sider"  collapsed={collapsed} onCollapse={onCollapse}>
+                <Sider
+                    className="sider"
+                    collapsed={collapsed}
+                    onCollapse={onCollapse}
+                >
                     <div className="logo" onClick={() => history.push('/home')}>Hongyi OJ</div>
                     {sideMenu}
                 </Sider>

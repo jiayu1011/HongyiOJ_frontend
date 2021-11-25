@@ -18,6 +18,7 @@ export const ProblemSubmit:React.FC<IProps> = (props) => {
         codeLanguage: '',
         code: '',
     })
+    const [isJava, setIsJava] = useState<boolean>(false)
 
 
     const getProblemInfo = () => {
@@ -43,14 +44,18 @@ export const ProblemSubmit:React.FC<IProps> = (props) => {
         }).then(res => {
             console.log('提交代码:', res)
             if(res.data.isOk){
-
+                message.success('代码提交成功').then()
+                setTimeout(() => {
+                    window.location.reload()
+                }, 2000)
             } else {
+                message.error('提交代码失败').then()
                 message.error(res.data.errMsg).then()
             }
         }).catch(err => {
             message.error('提交代码失败').then()
         })
-        message.success('代码提交成功').then()
+
         history.push('/evaluationList')
 
 
@@ -112,6 +117,10 @@ export const ProblemSubmit:React.FC<IProps> = (props) => {
                                         <b style={{
                                             color: 'red'
                                         }}>* 提交代码模式为ACM模式，即需要提交完整的、可以处理输入输出的程序</b>
+                                        <br/>
+                                        {isJava? <b style={{
+                                            color: 'red'
+                                        }}>* 注：提交Java代码时，主类名必须改为Main</b>:null}
                                         <Form.Item
                                             label='编程语言'
                                             name='codeLanguage'
@@ -119,11 +128,17 @@ export const ProblemSubmit:React.FC<IProps> = (props) => {
                                                 required: true,
                                                 message: '请选择编程语言类型'
                                             }]}
+                                            style={{
+                                                margin: '10px 0'
+                                            }}
                                         >
                                             <Select
                                                 placeholder='请选择编程语言类型'
                                                 style={{
                                                     width: '25%'
+                                                }}
+                                                onChange={(value) => {
+                                                    setIsJava(value==='Java')
                                                 }}
 
                                             >
