@@ -130,7 +130,7 @@ export const ManageProblems:React.FC<IProps> = (props) => {
 
     useEffect(() => {
         getProblemList()
-    }, [])
+    }, [currentPage, pageSize])
 
 
     return (
